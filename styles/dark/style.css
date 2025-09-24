@@ -1,0 +1,27 @@
+body {
+    background-color: #121212;
+    color: #e0e0e0;
+}
+.navbar {
+    background-color: #1e1e1e;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.5);
+}
+.dropdown-menu {
+    background-color: #2a2a2a;
+    border: 1px solid #444;
+    color: #e0e0e0;
+}
+.dropdown-item {
+    color: #e0e0e0;
+}
+.dropdown-item:hover {
+    background-color: #3a3a3a;
+}
+.btn-primary {
+    background-color: #1e88e5;
+    border-color: #1e88e5;
+}
+.btn-primary:hover {
+    background-color: #1976d2;
+    border-color: #1565c0;
+}

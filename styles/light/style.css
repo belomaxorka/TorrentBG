@@ -1,0 +1,19 @@
+body {
+    background-color: #f8f9fa;
+    color: #212529;
+}
+.navbar {
+    background-color: #ffffff;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+.dropdown-menu {
+    border: 1px solid #e9ecef;
+}
+.btn-primary {
+    background-color: #0d6efd;
+    border-color: #0d6efd;
+}
+.btn-primary:hover {
+    background-color: #0b5ed7;
+    border-color: #0a58ca;
+}
