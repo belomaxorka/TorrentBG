@@ -1,0 +1,9 @@
+.idea
+.vscode
+
+### TorrentBG ###
+backups/
+logs/
+torrents/
+uploads/
+config.php
