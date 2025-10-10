@@ -6,4 +6,6 @@ backups/
 logs/
 torrents/
 uploads/
+images/forums
+images/posters
 config.php

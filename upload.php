@@ -154,96 +154,101 @@ namespace {
     $categories = $stmt->fetchAll();
 
     if ($_POST['upload'] ?? false) {
-        if (!isset($_FILES['torrent_file']) || $_FILES['torrent_file']['error'] !== UPLOAD_ERR_OK) {
-            $error = $lang->get('select_torrent_file');
+        // Вземи името от формата — задължително
+        $name = trim($_POST['torrent_name'] ?? '');
+        if (empty($name)) {
+            $error = $lang->get('torrent_name') . ' ' . ($lang->get('is_required') ?? 'е задължително');
         } else {
-            $file = $_FILES['torrent_file'];
-            $allowedTypes = ['application/x-bittorrent', 'application/octet-stream'];
-            $maxSize = 5 * 1024 * 1024; // 5MB
-
-            if (!in_array($file['type'], $allowedTypes)) {
-                $error = $lang->get('invalid_torrent_file');
-            } elseif ($file['size'] > $maxSize) {
-                $error = $lang->get('file_too_large');
+            if (!isset($_FILES['torrent_file']) || $_FILES['torrent_file']['error'] !== UPLOAD_ERR_OK) {
+                $error = $lang->get('select_torrent_file');
             } else {
-                // Парсваме .torrent файла
-                $torrentData = file_get_contents($file['tmp_name']);
-                if ($torrentData === false) {
-                    $error = $lang->get('upload_failed') . ': Не може да се прочете файла.';
+                $file = $_FILES['torrent_file'];
+                $allowedTypes = ['application/x-bittorrent', 'application/octet-stream'];
+                $maxSize = 5 * 1024 * 1024; // 5MB
+
+                if (!in_array($file['type'], $allowedTypes)) {
+                    $error = $lang->get('invalid_torrent_file');
+                } elseif ($file['size'] > $maxSize) {
+                    $error = $lang->get('file_too_large');
                 } else {
-                    try {
-                        $decoded = BencodeParser::decode($torrentData);
-                    } catch (Exception $e) {
-                        $decoded = null;
-                    }
-
-                    if (!$decoded || !isset($decoded['info'])) {
-                        $error = $lang->get('invalid_torrent_structure');
+                    // Парсваме .torrent файла
+                    $torrentData = file_get_contents($file['tmp_name']);
+                    if ($torrentData === false) {
+                        $error = $lang->get('upload_failed') . ': Не може да се прочете файла.';
                     } else {
-                        $info = $decoded['info'];
-                        $name = $info['name'] ?? 'Unknown';
-                        $size = calculateTorrentSize($info);
-                        $filesCount = isset($info['files']) ? count($info['files']) : 1;
-
-                        // Генерираме info_hash — ВАЖНО: sha1(..., true) за бинарен изход!
-                        $infoBencoded = BencodeParser::encode($info);
-                        $infoHash = sha1($infoBencoded, true); // ← БИНАРЕН HASH (важно!)
-
-                        // Качваме постер ако има
-                        $posterPath = null;
-                        if (isset($_FILES['poster']) && $_FILES['poster']['error'] === UPLOAD_ERR_OK) {
-                            $poster = $_FILES['poster'];
-                            $allowedImageTypes = ['image/jpeg', 'image/png', 'image/webp'];
-                            $maxImageSize = 2 * 1024 * 1024; // 2MB
-
-                            if (in_array($poster['type'], $allowedImageTypes) && $poster['size'] <= $maxImageSize) {
-                                $ext = pathinfo($poster['name'], PATHINFO_EXTENSION);
-                                $posterName = uniqid() . '.' . $ext;
-                                $posterPath = 'images/posters/' . $posterName;
-                                move_uploaded_file($poster['tmp_name'], $posterPath);
-                            }
-                        }
-
-                        // Валидираме категорията
-                        $categoryId = (int)($_POST['category_id'] ?? 1);
-                        $validCategory = false;
-                        foreach ($categories as $cat) {
-                            if ($cat['id'] == $categoryId) {
-                                $validCategory = true;
-                                break;
-                            }
-                        }
-                        if (!$validCategory) {
-                            $categoryId = 1; // Default category
-                        }
-
-                        // Записваме в базата
                         try {
-                            $stmt = $pdo->prepare("
-                                INSERT INTO torrents 
-                                (info_hash, name, description, poster, imdb_link, youtube_link, category_id, uploader_id, size, files_count)
-                                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-                            ");
-                            $stmt->execute([
-                                $infoHash, // ← Бинарен хеш — базата трябва да е BLOB или VARCHAR(40) в hex!
-                                $name,
-                                $_POST['description'] ?? '',
-                                $posterPath,
-                                $_POST['imdb_link'] ?? null,
-                                $_POST['youtube_link'] ?? null,
-                                $categoryId,
-                                $auth->getUser()['id'],
-                                $size,
-                                $filesCount
-                            ]);
-
-                            // Преместваме .torrent файла
-                            $torrentFileName = bin2hex($infoHash) . '.torrent'; // ← Ако искаш filename да е хекс
-                            move_uploaded_file($file['tmp_name'], 'torrents/' . $torrentFileName);
-
-                            $success = true;
+                            $decoded = BencodeParser::decode($torrentData);
                         } catch (Exception $e) {
-                            $error = $lang->get('upload_failed') . ': ' . $e->getMessage();
+                            $decoded = null;
+                        }
+
+                        if (!$decoded || !isset($decoded['info'])) {
+                            $error = $lang->get('invalid_torrent_structure');
+                        } else {
+                            $info = $decoded['info'];
+                            $size = calculateTorrentSize($info);
+                            $filesCount = isset($info['files']) ? count($info['files']) : 1;
+
+                            // Генерираме info_hash като HEX (40 символа) — ключова промяна!
+                            $infoBencoded = BencodeParser::encode($info);
+                            $infoHash = sha1($infoBencoded); // ← без втория параметър → HEX
+
+                            // Качваме постер ако има
+                            $posterPath = null;
+                            if (isset($_FILES['poster']) && $_FILES['poster']['error'] === UPLOAD_ERR_OK) {
+                                $poster = $_FILES['poster'];
+                                $allowedImageTypes = ['image/jpeg', 'image/png', 'image/webp'];
+                                $maxImageSize = 2 * 1024 * 1024; // 2MB
+
+                                if (in_array($poster['type'], $allowedImageTypes) && $poster['size'] <= $maxImageSize) {
+                                    $ext = pathinfo($poster['name'], PATHINFO_EXTENSION);
+                                    $posterName = uniqid() . '.' . $ext;
+                                    $posterPath = 'images/posters/' . $posterName;
+                                    move_uploaded_file($poster['tmp_name'], $posterPath);
+                                }
+                            }
+
+                            // Валидираме категорията
+                            $categoryId = (int)($_POST['category_id'] ?? 1);
+                            $validCategory = false;
+                            foreach ($categories as $cat) {
+                                if ($cat['id'] == $categoryId) {
+                                    $validCategory = true;
+                                    break;
+                                }
+                            }
+                            if (!$validCategory) {
+                                $categoryId = 1; // Default category
+                            }
+
+                            // Записваме в базата
+                            try {
+                                $stmt = $pdo->prepare("
+                                    INSERT INTO torrents 
+                                    (info_hash, name, description, poster, imdb_link, youtube_link, category_id, uploader_id, size, files_count)
+                                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                                ");
+                                $stmt->execute([
+                                    $infoHash, // ← вече е HEX стринг
+                                    $name,
+                                    $_POST['description'] ?? '',
+                                    $posterPath,
+                                    $_POST['imdb_link'] ?? null,
+                                    $_POST['youtube_link'] ?? null,
+                                    $categoryId,
+                                    $auth->getUser()['id'],
+                                    $size,
+                                    $filesCount
+                                ]);
+
+                                // Преместваме .torrent файла с HEX име
+                                $torrentFileName = $infoHash . '.torrent'; // ← директно използваме HEX
+                                move_uploaded_file($file['tmp_name'], 'torrents/' . $torrentFileName);
+
+                                $success = true;
+                            } catch (Exception $e) {
+                                $error = $lang->get('upload_failed') . ': ' . $e->getMessage();
+                            }
                         }
                     }
                 }
@@ -276,23 +281,30 @@ namespace {
                         <input type="hidden" name="MAX_FILE_SIZE" value="5242880">
 
                         <div class="mb-3">
-                            <label class="form-label"><?= $lang->get('torrent_file') ?> *</label>
-                            <input type="file" name="torrent_file" class="form-control" accept=".torrent" required>
-                        </div>
-
-                        <div class="mb-3">
                             <label class="form-label"><?= $lang->get('category') ?> *</label>
                             <select name="category_id" class="form-select" required>
                                 <option value=""><?= $lang->get('select_category') ?></option>
                                 <?php foreach ($categories as $cat): ?>
                                     <option value="<?= $cat['id'] ?>">
                                         <?php if ($cat['icon']): ?>
-                                            <img src="/<?= $cat['icon'] ?>" width="20" height="20" class="me-2">
+                                            <img src="/<?= htmlspecialchars($cat['icon']) ?>" width="20" height="20" class="me-2">
                                         <?php endif; ?>
                                         <?= htmlspecialchars($cat['name']) ?>
                                     </option>
                                 <?php endforeach; ?>
                             </select>
+                        </div>
+
+                        <!-- НОВО ПОЛЕ: ИМЕ НА ТОРЕНТА -->
+                        <div class="mb-3">
+                            <label class="form-label"><?= $lang->get('torrent_name') ?> *</label>
+                            <input type="text" name="torrent_name" class="form-control" required>
+                            <div class="form-text"><?= $lang->get('torrent_name_help') ?></div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label"><?= $lang->get('torrent_file') ?> *</label>
+                            <input type="file" name="torrent_file" class="form-control" accept=".torrent" required>
                         </div>
 
                         <div class="mb-3">
@@ -302,7 +314,7 @@ namespace {
 
                         <div class="mb-3">
                             <label class="form-label"><?= $lang->get('imdb_link') ?></label>
-                            <input type="url" name="imdb_link" class="form-control" placeholder="https://www.imdb.com/title/tt...  ">
+                            <input type="url" name="imdb_link" class="form-control" placeholder="https://www.imdb.com/title/tt...">
                         </div>
 
                         <div class="mb-3">

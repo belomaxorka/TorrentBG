@@ -155,25 +155,23 @@ require_once __DIR__ . '/templates/header.php';
 
         <!-- Коментари -->
         <div class="card">
-            <div class="card-header d-flex justify-content-between">
-                <span><?= $lang->get('comments') ?> (<?= count($comments) ?>)</span>
+            <div class="card-header">
+                <h5 class="mb-0"><?= $lang->get('comments') ?> (<?= count($comments) ?>)</h5>
                 <?php if ($auth->isLoggedIn()): ?>
-                    <button class="btn btn-sm btn-outline-primary" data-bs-toggle="collapse" data-bs-target="#addComment">+ <?= $lang->get('add_comment') ?></button>
+                    <p class="mb-0 mt-2 text-muted"><?= $lang->get('add_your_comment') ?></p>
                 <?php endif; ?>
             </div>
-            
+
             <?php if ($auth->isLoggedIn()): ?>
-                <div class="collapse" id="addComment">
-                    <div class="card-body">
-                        <form method="POST" action="/comment_add.php">
-                            <input type="hidden" name="torrent_id" value="<?= $torrent['id'] ?>">
-                            <div class="mb-3">
-                                <textarea name="comment" class="form-control" rows="3" required></textarea>
-                                <div class="form-text"><?= $lang->get('bbc_codes_supported') ?></div>
-                            </div>
-                            <button type="submit" class="btn btn-primary"><?= $lang->get('post_comment') ?></button>
-                        </form>
-                    </div>
+                <div class="card-body border-bottom">
+                    <form method="POST" action="/comment_add.php">
+                        <input type="hidden" name="torrent_id" value="<?= $torrent['id'] ?>">
+                        <div class="mb-3">
+                            <textarea name="comment" class="form-control" rows="3" placeholder="<?= $lang->get('write_comment') ?>" required></textarea>
+                            <div class="form-text"><?= $lang->get('bbc_codes_supported') ?></div>
+                        </div>
+                        <button type="submit" class="btn btn-primary"><?= $lang->get('post_comment') ?></button>
+                    </form>
                 </div>
             <?php endif; ?>
 

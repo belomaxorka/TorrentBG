@@ -18,14 +18,19 @@ $pdo = Database::getInstance();
 $auth = new Auth($pdo);
 $styleManager = new StyleManager();
 $lang = new Language($_SESSION['lang'] ?? 'en');
+
 // Обработка на смяна на език
 if (isset($_GET['set_lang']) && isset($_GET['lang'])) {
     $newLang = $_GET['lang'];
     if (in_array($newLang, $lang->getAvailable())) {
         $_SESSION['lang'] = $newLang;
         setcookie('lang', $newLang, time() + 365*24*3600, '/');
-        // Пренасочваме без параметъра set_lang, за да не се повтаря
-        $currentUrl = strtok($_SERVER['REQUEST_URI'], '?');
+        // Пренасочваме към същата страница, но без set_lang
+        $query = $_GET;
+        unset($query['set_lang']);
+        unset($query['lang']);
+        $queryString = !empty($query) ? '?' . http_build_query($query) : '';
+        $currentUrl = strtok($_SERVER['REQUEST_URI'], '?') . $queryString;
         header("Location: $currentUrl");
         exit;
     }
@@ -46,6 +51,94 @@ foreach ($requiredDirs as $dir) {
         mkdir(ROOT_PATH . $dir, 0755, true);
     }
 }
+
+// Създаваме таблицата `peers`, ако не съществува
+try {
+    $pdo->exec("CREATE TABLE IF NOT EXISTS `peers` (
+        `id` INT NOT NULL AUTO_INCREMENT,
+        `torrent_id` INT NOT NULL,
+        `peer_id` VARCHAR(40) NOT NULL,
+        `ip` VARCHAR(45) NOT NULL,
+        `port` INT NOT NULL,
+        `seeder` TINYINT(1) NOT NULL DEFAULT 0,
+        `uploaded` BIGINT UNSIGNED NOT NULL DEFAULT 0,
+        `downloaded` BIGINT UNSIGNED NOT NULL DEFAULT 0,
+        `left` BIGINT UNSIGNED NOT NULL DEFAULT 0,
+        `last_announce` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+        PRIMARY KEY (`id`),
+        UNIQUE KEY `unique_peer` (`torrent_id`, `peer_id`),
+        KEY `torrent_id` (`torrent_id`),
+        KEY `seeder` (`seeder`)
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;");
+} catch (Exception $e) {
+    // Таблицата вече съществува или няма нужда да се създава
+}
+
+// Функция за генериране на URL със запазени параметри
+function buildLangUrl($langCode) {
+    $params = $_GET;
+    $params['lang'] = $langCode;
+    $params['set_lang'] = '1';
+    return '?' . http_build_query($params);
+}
+
+// === СТАТИСТИКА С ЦВЕТНИ САЙДЕРИ И ЛИЙЧЪРИ ===
+$stmt = $pdo->query("SELECT COUNT(*) FROM users");
+$totalUsers = $stmt->fetchColumn();
+
+$stmt = $pdo->query("SELECT COUNT(*) FROM torrents");
+$totalTorrents = $stmt->fetchColumn();
+
+// Проверка дали таблицата "peers" има колона "seeder"
+$hasSeederColumn = false;
+try {
+    $stmt = $pdo->query("SELECT seeder FROM peers LIMIT 1");
+    $hasSeederColumn = true;
+} catch (PDOException $e) {
+    // Колоната "seeder" не съществува
+}
+
+if ($hasSeederColumn) {
+    // Премахваме старите пиъри
+    $pdo->exec("DELETE FROM peers WHERE last_announce < NOW() - INTERVAL 30 MINUTE");
+
+    $stmt = $pdo->query("SELECT COUNT(*) FROM peers WHERE seeder = 1");
+    $seeders = $stmt->fetchColumn();
+
+    $stmt = $pdo->query("SELECT COUNT(*) FROM peers WHERE seeder = 0");
+    $leechers = $stmt->fetchColumn();
+
+    $totalPeers = $seeders + $leechers;
+    $seederPercentage = $totalPeers > 0 ? round(($seeders / $totalPeers) * 100, 1) : 0;
+
+    $statsText = sprintf(
+        "%s %s, %s %s (<span class=\"text-success\">%s</span> %s, <span class=\"text-primary\">%s</span> %s, %s%%)",
+        number_format($totalUsers),
+        $lang->get('users'),
+        number_format($totalTorrents),
+        $lang->get('torrents'),
+        number_format($seeders),
+        $lang->get('seeders'),
+        number_format($leechers),
+        $lang->get('leechers'),
+        $seederPercentage
+    );
+} else {
+    // Показваме само основната статистика
+    $statsText = sprintf(
+        "%s %s, %s %s",
+        number_format($totalUsers),
+        $lang->get('users'),
+        number_format($totalTorrents),
+        $lang->get('torrents')
+    );
+}
+
+$greeting = '';
+if ($auth->isLoggedIn()) {
+    $user = $auth->getUser();
+    $greeting = $lang->get('welcome') . ', <strong>' . htmlspecialchars($user['username']) . '</strong>';
+}
 ?>
 <!DOCTYPE html>
 <html lang="<?= $lang->getCurrent() ?>">
@@ -56,6 +149,11 @@ foreach ($requiredDirs as $dir) {
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     <link href="<?= $styleManager->getCSS() ?>" rel="stylesheet">
+    <style>
+        .search-form {
+            max-width: 300px;
+        }
+    </style>
 </head>
 <body>
     <nav class="navbar navbar-expand-lg navbar-light bg-light">
@@ -94,71 +192,87 @@ foreach ($requiredDirs as $dir) {
                     <?php endif; ?>
                 </ul>
 
-                <!-- Потребителски меню -->
-                <ul class="navbar-nav">
-                    <?php if ($auth->isLoggedIn()): ?>
-                        <li class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown">
-                                <i class="bi bi-person-circle me-1"></i><?= htmlspecialchars($auth->getUser()['username']) ?>
-                            </a>
-                            <ul class="dropdown-menu dropdown-menu-end">
-                                <li>
-                                    <a class="dropdown-item" href="/profile.php">
-                                        <i class="bi bi-person me-2"></i><?= $lang->get('profile') ?>
-                                    </a>
-                                </li>
-                                <li><hr class="dropdown-divider"></li>
-                                <li>
-                                    <a class="dropdown-item" href="/logout.php">
-                                        <i class="bi bi-box-arrow-right me-2"></i><?= $lang->get('logout') ?>
-                                    </a>
-                                </li>
-                            </ul>
-                        </li>
-                    <?php else: ?>
-                        <li class="nav-item">
-                            <a class="nav-link" href="/login.php">
-                                <i class="bi bi-box-arrow-in-right me-1"></i><?= $lang->get('login') ?>
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="/register.php">
-                                <i class="bi bi-person-plus-fill me-1"></i><?= $lang->get('register') ?>
-                            </a>
-                        </li>
-                    <?php endif; ?>
-
-                    <!-- Смяна на език -->
-                    <!-- Смяна на език -->
-<li class="nav-item dropdown">
-    <a class="nav-link dropdown-toggle" href="#" id="langDropdown" role="button" data-bs-toggle="dropdown">
-        <i class="bi bi-globe me-1"></i><?= strtoupper($lang->getCurrent()) ?>
-    </a>
-    <ul class="dropdown-menu">
-        <?php foreach ($lang->getAvailable() as $code): ?>
-            <li>
-                <a class="dropdown-item" href="?lang=<?= $code ?>&set_lang=1">
-                    <i class="bi bi-translate me-2"></i><?= strtoupper($code) ?>
-                </a>
-            </li>
-        <?php endforeach; ?>
-    </ul>
-</li>
-
-                    <!-- Смяна на тема -->
-                    <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" id="styleDropdown" role="button" data-bs-toggle="dropdown">
-                            <i class="bi bi-palette me-1"></i><?= $lang->get($styleManager->getCurrent()) ?>
-                        </a>
-                        <ul class="dropdown-menu">
-                            <?php foreach ($styleManager->getAvailable() as $style): ?>
-                                <li><a class="dropdown-item" href="?style=<?= $style ?>"><i class="bi bi-circle-fill me-2" style="color: <?= $style === 'dark' ? '#333' : '#0d6efd' ?>;"></i><?= $lang->get($style) ?></a></li>
-                            <?php endforeach; ?>
-                        </ul>
-                    </li>
-                </ul>
+                <!-- ТЪРСАЧКА — сега е в дясно на главното меню -->
+                <form class="d-flex search-form" action="/search.php" method="GET">
+                    <input class="form-control me-2" type="search" name="q" placeholder="<?= $lang->get('search_placeholder') ?>" aria-label="Search">
+                    <button class="btn btn-outline-secondary" type="submit"><?= $lang->get('search_button') ?></button>
+                </form>
             </div>
         </div>
     </nav>
+
+    <!-- БЛОК СЪС СТАТИСТИКА ПОД МЕНЮТО -->
+    <div class="bg-dark text-light py-2 px-3 d-flex justify-content-between align-items-center small">
+        <div>
+            <?= $statsText ?>
+        </div>
+        <div class="d-flex align-items-center gap-3">
+            <!-- Добре дошъл + Ник -->
+            <?php if ($auth->isLoggedIn()): ?>
+                <?= $greeting ?>
+            <?php else: ?>
+                <a href="/login.php" class="text-light text-decoration-none"><?= $lang->get('login') ?></a> | 
+                <a href="/register.php" class="text-light text-decoration-none"><?= $lang->get('register') ?></a>
+            <?php endif; ?>
+
+            <!-- Потребителско меню (само ако е логнат) -->
+            <?php if ($auth->isLoggedIn()): ?>
+                <li class="nav-item dropdown list-unstyled mb-0">
+                    <a class="nav-link dropdown-toggle p-0 text-light" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown">
+                        <i class="bi bi-person-circle"></i>
+                    </a>
+                    <ul class="dropdown-menu dropdown-menu-end">
+                        <li>
+                            <a class="dropdown-item" href="/profile.php">
+                                <i class="bi bi-person me-2"></i><?= $lang->get('profile') ?>
+                            </a>
+                        </li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li>
+                            <a class="dropdown-item" href="/logout.php">
+                                <i class="bi bi-box-arrow-right me-2"></i><?= $lang->get('logout') ?>
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+            <?php endif; ?>
+
+            <!-- Смяна на език -->
+            <li class="nav-item dropdown list-unstyled mb-0">
+                <a class="nav-link dropdown-toggle p-0 text-light" href="#" id="langDropdown" role="button" data-bs-toggle="dropdown">
+                    <i class="bi bi-globe"></i>
+                </a>
+                <ul class="dropdown-menu">
+                    <?php
+                    $flags = [
+                        'bg' => '🇧🇬',
+                        'en' => '🇬🇧',
+                        'de' => '🇩🇪',
+                        'fr' => '🇫🇷',
+                        'ru' => '🇷🇺',
+                    ];
+                    foreach ($lang->getAvailable() as $code): ?>
+                        <li>
+                            <a class="dropdown-item" href="<?= htmlspecialchars(buildLangUrl($code)) ?>">
+                                <span class="me-2"><?= $flags[$code] ?? '🌐' ?></span><?= strtoupper($code) ?>
+                            </a>
+                        </li>
+                    <?php endforeach; ?>
+                </ul>
+            </li>
+
+            <!-- Смяна на тема -->
+            <li class="nav-item dropdown list-unstyled mb-0">
+                <a class="nav-link dropdown-toggle p-0 text-light" href="#" id="styleDropdown" role="button" data-bs-toggle="dropdown">
+                    <i class="bi bi-palette"></i>
+                </a>
+                <ul class="dropdown-menu">
+                    <?php foreach ($styleManager->getAvailable() as $style): ?>
+                        <li><a class="dropdown-item" href="?style=<?= $style ?>"><i class="bi bi-circle-fill me-2" style="color: <?= $style === 'dark' ? '#333' : '#0d6efd' ?>;"></i><?= $lang->get($style) ?></a></li>
+                    <?php endforeach; ?>
+                </ul>
+            </li>
+        </div>
+    </div>
 
     <div class="container py-4">

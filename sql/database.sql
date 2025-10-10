@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1:3306
--- Generation Time: Sep 24, 2025 at 02:48 AM
+-- Generation Time: Oct 10, 2025 at 06:06 AM
 -- Server version: 9.1.0
 -- PHP Version: 8.4.0
 
@@ -63,7 +63,7 @@ CREATE TABLE IF NOT EXISTS `blocks` (
 
 INSERT INTO `blocks` (`id`, `name`, `title`, `position`, `order`, `is_active`, `is_locked`) VALUES
 (11, 'latest_torrents', 'Последни торенти', 'center', 2, 1, 0),
-(12, 'shoutbox', 'Чат', 'center', 1, 0, 1),
+(12, 'shoutbox', 'Чат', 'center', 1, 1, 0),
 (13, 'user_info', 'Потребителска информация', 'left', 1, 1, 0),
 (14, 'online_users', 'Онлайн потребители', 'right', 2, 1, 0),
 (15, 'clock', 'Часовник', 'right', 2, 1, 0),
@@ -84,14 +84,15 @@ CREATE TABLE IF NOT EXISTS `categories` (
   `order` tinyint UNSIGNED NOT NULL DEFAULT '0',
   `is_active` tinyint(1) NOT NULL DEFAULT '1',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
 -- Dumping data for table `categories`
 --
 
 INSERT INTO `categories` (`id`, `name`, `icon`, `description`, `order`, `is_active`) VALUES
-(6, 'Movies Xvid', 'images/categories/category_68cd832480b94.png', 'Only Xvid', 1, 1);
+(6, 'Movies Xvid', 'images/categories/category_68cd832480b94.png', 'Only Xvid', 1, 1),
+(7, 'Movies/HD', 'images/categories/category_68e760668ceaf.png', '', 2, 1);
 
 -- --------------------------------------------------------
 
@@ -148,14 +149,19 @@ CREATE TABLE IF NOT EXISTS `forums` (
   PRIMARY KEY (`id`),
   KEY `parent_id` (`parent_id`),
   KEY `last_post_id` (`last_post_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
 -- Dumping data for table `forums`
 --
 
 INSERT INTO `forums` (`id`, `name`, `description`, `icon`, `parent_id`, `order`, `is_active`, `topics_count`, `posts_count`, `last_post_id`) VALUES
-(1, 'General Forum', '', NULL, NULL, 0, 1, 1, 2, 2);
+(1, 'General Forum', '', NULL, NULL, 0, 1, 1, 2, 2),
+(2, 'Movies', 'Only for movies', NULL, NULL, 1, 1, 0, 0, NULL),
+(3, 'Games', 'Only for games', NULL, NULL, 2, 1, 0, 0, NULL),
+(4, 'Music', 'Only for Music', NULL, NULL, 3, 1, 0, 0, NULL),
+(5, 'Programs', 'Only for Programs', NULL, NULL, 4, 1, 0, 0, NULL),
+(6, 'Suggestions and complaints', '', NULL, 1, 2, 1, 0, 0, NULL);
 
 -- --------------------------------------------------------
 
@@ -215,7 +221,7 @@ CREATE TABLE IF NOT EXISTS `forum_topics` (
 --
 
 INSERT INTO `forum_topics` (`id`, `forum_id`, `user_id`, `title`, `created_at`, `updated_at`, `views`, `replies`, `last_post_id`, `is_locked`, `is_sticky`) VALUES
-(1, 1, 1, 'Test', '2025-09-19 16:10:08', '2025-09-22 12:24:02', 7, 1, 2, 0, 0);
+(1, 1, 1, 'Test', '2025-09-19 16:10:08', '2025-09-25 05:58:55', 8, 1, 2, 0, 0);
 
 -- --------------------------------------------------------
 
@@ -274,7 +280,7 @@ CREATE TABLE IF NOT EXISTS `online_users` (
 --
 
 INSERT INTO `online_users` (`user_id`, `last_activity`, `is_bot`) VALUES
-(1, '2025-09-23 12:20:13', 0);
+(1, '2025-10-09 23:16:59', 0);
 
 -- --------------------------------------------------------
 
@@ -288,6 +294,7 @@ CREATE TABLE IF NOT EXISTS `peers` (
   `peer_id` varchar(40) COLLATE utf8mb4_unicode_ci NOT NULL,
   `ip` varchar(45) COLLATE utf8mb4_unicode_ci NOT NULL,
   `port` int UNSIGNED NOT NULL,
+  `seeder` tinyint(1) NOT NULL DEFAULT '0',
   `uploaded` bigint UNSIGNED NOT NULL DEFAULT '0',
   `downloaded` bigint UNSIGNED NOT NULL DEFAULT '0',
   `left` bigint UNSIGNED NOT NULL DEFAULT '0',
@@ -457,36 +464,15 @@ CREATE TABLE IF NOT EXISTS `shoutbox` (
   `created_at` datetime DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
   KEY `user_id` (`user_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=24 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=33 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
 -- Dumping data for table `shoutbox`
 --
 
 INSERT INTO `shoutbox` (`id`, `user_id`, `message`, `created_at`) VALUES
-(1, 1, 'hi all', '2025-09-19 19:55:21'),
-(2, 1, '[smile=laugh]', '2025-09-19 19:55:29'),
-(3, 1, 'hi all', '2025-09-19 20:48:40'),
-(4, 1, '[smile=grin]', '2025-09-19 20:49:59'),
-(5, 1, 'hi', '2025-09-19 20:50:12'),
-(6, 1, 'Здравеите', '2025-09-19 21:50:31'),
-(7, 1, 'hi', '2025-09-22 08:55:04'),
-(8, 1, '[smile=laugh]', '2025-09-22 11:18:59'),
-(9, 1, 'здравеите', '2025-09-22 11:19:16'),
-(10, 1, 'hi all', '2025-09-22 11:20:14'),
-(11, 1, 'hi all', '2025-09-22 11:30:05'),
-(12, 1, '[smile=laugh]', '2025-09-22 11:31:44'),
-(13, 1, 'hi eeeee', '2025-09-22 11:35:09'),
-(14, 1, 'dfszdfdzsdfzds', '2025-09-22 11:35:24'),
-(15, 1, 'hi', '2025-09-22 11:41:23'),
-(16, 1, '[smile=laugh]', '2025-09-22 12:15:50'),
-(17, 1, '[smile=laugh]', '2025-09-22 12:21:48'),
-(18, 1, '[smile=grin]', '2025-09-22 12:34:45'),
-(19, 1, 'hi', '2025-09-22 12:44:58'),
-(20, 1, '[smile=laugh]', '2025-09-22 12:55:14'),
-(21, 1, '[smile=tongue]', '2025-09-22 12:55:44'),
-(22, 1, 'Как сме', '2025-09-22 12:57:15'),
-(23, 1, 'хи', '2025-09-22 13:09:10');
+(31, 1, 'Привет', '2025-10-09 20:40:17'),
+(32, 1, '[smile=wink]', '2025-10-09 20:40:31');
 
 -- --------------------------------------------------------
 
@@ -514,15 +500,18 @@ CREATE TABLE IF NOT EXISTS `torrents` (
   `updated_at` datetime DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
   UNIQUE KEY `info_hash` (`info_hash`)
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
 -- Dumping data for table `torrents`
 --
 
 INSERT INTO `torrents` (`id`, `info_hash`, `name`, `description`, `poster`, `imdb_link`, `youtube_link`, `category_id`, `uploader_id`, `size`, `files_count`, `seeders`, `leechers`, `completed`, `uploaded_at`, `updated_at`) VALUES
-(1, 'V', 'The.Naked.Gun.2025.1080p.WEB.DDP5.1.Atmos.H.265-WAR', '## Режисьор : Акива Шейфър\r\n\r\n## В ролите : Лиъм Нийсън, Памела Андерсън, Пол Уолтър Хаузър, Кевин Дюранд, Дани Хюстън, Лайза Коши, СиСиЕйч Паундър, Еди Ю, Майкъл Бийзли, Моузес Джоунс\r\n\r\n## Държава : САЩ, Канада\r\n\r\n## Година : 2025\r\n\r\n## Времетраене : 85 минути\r\n\r\n## Резюме : Запознайте се с Франк Дребин-младши – сина на легендарния Франк Дребин, изигран с безстрашен артистичен апломб от иконичния Лиъм Нийсън. Дребин-младши уверено върви в стъпките на баща си – непоколебим в правотата на закона и тотално неадекватен в прилагането му, всекидневно доказващ, че най-опасното оръжие е един полицай с добро намерение и никакъв усет. Когато опасна престъпна конспирация заплашва града, той е принуден да се изправи срещу най-големия си кошмар. С таланта си да превръща рутинни разследвания в пълни катастрофи, Дребин-младши се впуска в рисковани преследвания, взривоопасни стълкновения и куп недоразумения. Ще успее ли да спаси положението, да изчисти името си и да не разруши половината град, докато го прави? Вероятно не. Но ще е забавно да го гледаме как се мъчи.', 'images/posters/68d0e4727f111.jpg', 'https://www.imdb.com/title/tt3402138/', 'https://youtu.be/uLguU7WLreA?si=gqAGHWLd5VAT6ii0', 6, 1, 3064004315, 3, 0, 0, 0, '2025-09-22 08:53:54', '2025-09-22 08:53:54'),
-(2, '', 'Chief.of.War.S01E09.The.Black.Desert.1080p.WEB.DDP5.1.Atmos.H.265-WAR', '## Режисьор : Джейсън Момоа\r\n\r\n## В ролите : Джейсън Момоа, Лусиан Бюканан, Те Ао о Хинепехинга, Те Кохе Тухака, Брандън Фин, Сиуа Икалео, Майней Кинимака, Моузес Гудс, Джеймс Удом, Бенджамин Хойджес, Роймата Фокс, Чарли Бръмбли, Темуера Морисън, Клиф Къртис\r\n\r\n## IMDB : Линк към IMDB\r\n\r\n## TVMaze : Линк към TVMaze\r\n\r\n## Държава : САЩ\r\n\r\n## Година : 2025\r\n\r\n## Времетраене : 60 минути\r\n\r\n## Резюме : Сюжетът е вдъхновен от реални събития и се върти около легендарен хавайски воин, който иска да обедини различните местни племена на хавайските острови в края на XVIII в., когато пристигат европейските колонизатори и се опитват да ги поставят под собствен контрол. ', 'images/posters/68d128f7ca87b.jpg', 'https://www.imdb.com/title/tt19381692/', 'https://youtu.be/5qY0Zh61H3w?si=iAixMD7_6FfVYDZ3', 6, 1, 2141834780, 3, 0, 0, 0, '2025-09-22 13:46:15', '2025-09-22 13:46:15');
+(1, '46ce761ca4c53b59cd0907bb02705e07739cb084', 'The.Naked.Gun.2025.1080p.WEB.DDP5.1.Atmos.H.265-WAR', '## Режисьор : Акива Шейфър\r\n\r\n## В ролите : Лиъм Нийсън, Памела Андерсън, Пол Уолтър Хаузър, Кевин Дюранд, Дани Хюстън, Лайза Коши, СиСиЕйч Паундър, Еди Ю, Майкъл Бийзли, Моузес Джоунс\r\n\r\n## Държава : САЩ, Канада\r\n\r\n## Година : 2025\r\n\r\n## Времетраене : 85 минути\r\n\r\n## Резюме : Запознайте се с Франк Дребин-младши – сина на легендарния Франк Дребин, изигран с безстрашен артистичен апломб от иконичния Лиъм Нийсън. Дребин-младши уверено върви в стъпките на баща си – непоколебим в правотата на закона и тотално неадекватен в прилагането му, всекидневно доказващ, че най-опасното оръжие е един полицай с добро намерение и никакъв усет. Когато опасна престъпна конспирация заплашва града, той е принуден да се изправи срещу най-големия си кошмар. С таланта си да превръща рутинни разследвания в пълни катастрофи, Дребин-младши се впуска в рисковани преследвания, взривоопасни стълкновения и куп недоразумения. Ще успее ли да спаси положението, да изчисти името си и да не разруши половината град, докато го прави? Вероятно не. Но ще е забавно да го гледаме как се мъчи.', 'images/posters/68d0e4727f111.jpg', 'https://www.imdb.com/title/tt3402138/', 'https://youtu.be/uLguU7WLreA?si=gqAGHWLd5VAT6ii0', 6, 1, 3064004315, 3, 0, 0, 4, '2025-09-22 08:53:54', '2025-10-09 10:46:20'),
+(2, '', 'Chief.of.War.S01E09.The.Black.Desert.1080p.WEB.DDP5.1.Atmos.H.265-WAR', '## Режисьор : Джейсън Момоа\r\n\r\n## В ролите : Джейсън Момоа, Лусиан Бюканан, Те Ао о Хинепехинга, Те Кохе Тухака, Брандън Фин, Сиуа Икалео, Майней Кинимака, Моузес Гудс, Джеймс Удом, Бенджамин Хойджес, Роймата Фокс, Чарли Бръмбли, Темуера Морисън, Клиф Къртис\r\n\r\n## IMDB : Линк към IMDB\r\n\r\n## TVMaze : Линк към TVMaze\r\n\r\n## Държава : САЩ\r\n\r\n## Година : 2025\r\n\r\n## Времетраене : 60 минути\r\n\r\n## Резюме : Сюжетът е вдъхновен от реални събития и се върти около легендарен хавайски воин, който иска да обедини различните местни племена на хавайските острови в края на XVIII в., когато пристигат европейските колонизатори и се опитват да ги поставят под собствен контрол. ', 'images/posters/68d128f7ca87b.jpg', 'https://www.imdb.com/title/tt19381692/', 'https://youtu.be/5qY0Zh61H3w?si=iAixMD7_6FfVYDZ3', 6, 1, 2141834780, 3, 0, 0, 0, '2025-09-22 13:46:15', '2025-09-22 13:46:15'),
+(3, 'F', 'Prisoner.Of.War.2025.1080p.WEBRip.x265..AAC-YTS-TP', ' Prisoner of War (2025), Военнопленный [2025] // Военнопленник (2025)\r\n\r\nДържава: Филипини, САЩ\r\n\r\nГодина: 2025\r\n\r\nЖанр: екшън, трилър, военен, бойни изкуства\r\n\r\nРежисьори: Луис Мандилор\r\n\r\nВреметраене: 1 ч 52 мин 51 сек\r\n\r\nhttps://www.imdb.com/title/tt33057137/\r\n\r\n\r\nВ ролите: Скот Адкинс, Питър Шинкода, Майкъл Копон, Доналд Сероне, Майкъл Рене Уолтън, Гари Кернс II, Габи Гарсия, Масанори Мимото, Шейн Косуги, Ацуки Кашио, Кансуке Йокой, Пи Бернардо, Сол Еугенио, Коджи Хиронака, Андрей Касушкин и др.\r\n\r\n.:Резюме:.\r\n\r\n\r\nДжеймс Райт (Скот Адкинс), командир на британска ескадрила, е изпратен на последна мисия в подкрепа на съюзническите сили, сражаващи се с японците по време на ВСВ - битката при Батаан. Заловен, той попада в японски лагер за военнопленници. Там подполковник Ито открива, че Райт е бил традиционно обучен в Токио и многократно го принуждава да участва в битки с най-добрите му воини. Но уменията в боя, непоколебимата воля и решителност на Райт дават на другите затворници нова надежда за оцеляване.\r\n\r\n.:Субтитри:.\r\n\r\nанглийски - пълни, български - по-късно\r\n\r\n.:Aудио:.\r\n\r\nанглийски, филипински - оригинал', 'images/posters/68d4b1dc734b6.jpg', 'https://www.imdb.com/title/tt33057137/', 'https://youtu.be/mKFL8CMoCVk?si=O1FHkcspfA1s7w00', 6, 1, 2025838283, 15, 0, 0, 0, '2025-09-25 06:07:08', '2025-09-25 06:07:08'),
+(4, '/<*', 'Afterburn / Изпепеляване (2025)', '## Режисьор : Джей Джей Пери\r\n\r\n## В ролите : Самюъл Л. Джаксън, Дейв Батиста, Олга Куриленко, Киристофър Хивю, Даниел Бернхард, Идън Епстейн, Джордж Сомнър, Фил Цимерман\r\n\r\n## Държава : САЩ\r\n\r\n## Година : 2025\r\n\r\n## Времетраене : 105 минути\r\n\r\n## Резюме : След като мощно слънчево изригване унищожава източното полукълбо на Земята, един смел търсач на съкровища се впуска в приключения из Европа, за да открие легендарната „Мона Лиза“. Скоро обаче става ясно, че светът се нуждае много повече от герой, отколкото от една картина...', 'images/posters/68e75de927349.jpg', 'https://www.imdb.com/title/tt1210027/', 'https://youtu.be/-44nQPX34D0?si=FpHGj0EgT3Y9DH3o', 6, 1, 6980073215, 4, 0, 0, 0, '2025-10-09 10:02:01', '2025-10-09 10:02:01'),
+(5, 'c65e3d9a599b046e4e113e4eeb665aa528962dfd', 'The Lost Bus / Изгубеният автобус (2025)', '## Режисьор : Пол Грийнграс\r\n\r\n## В ролите : Матю Макконъхи, Америка Ферера, Юл Васкес, Ашли Аткинсън, Кимбърли Флорес, Ливай Макконъхи, Кей Макконъхи, Джон Месина, Кейт Уортън, Дани Маккарти, Спенсър Уотсън\r\n\r\n## Държава : САЩ\r\n\r\n## Година : 2025\r\n\r\n## Времетраене : 129 минути\r\n\r\n## Резюме : Режисьорът Пол Грийнграс пресъздава вдъхновено от реални събития и изпълнено с напрежение пътуване през един от най-смъртоносните горски пожари в Америка, в което своенравния шофьор на училищен автобус (Матю Макконъхи) и една всеотдайна учителка (Америка Ферера) се борят, за да спасят 22 деца от ужасяващия ад.', 'images/posters/68e76903c6b80.jpg', 'https://www.imdb.com/title/tt21103218/', 'https://youtu.be/XSDHjkuwaic?si=j5Mve6eo2J8QJh03', 7, 1, 4581963826, 3, 0, 0, 12, '2025-10-09 10:49:23', '2025-10-09 19:51:17');
 
 -- --------------------------------------------------------
 
@@ -542,14 +531,16 @@ CREATE TABLE IF NOT EXISTS `torrent_comments` (
   PRIMARY KEY (`id`),
   KEY `torrent_id` (`torrent_id`),
   KEY `user_id` (`user_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
 -- Dumping data for table `torrent_comments`
 --
 
 INSERT INTO `torrent_comments` (`id`, `torrent_id`, `user_id`, `comment`, `created_at`, `updated_at`, `is_edited`) VALUES
-(1, 1, 1, 'Супер', '2025-09-22 09:08:20', '2025-09-22 09:08:20', 0);
+(1, 1, 1, 'Супер', '2025-09-22 09:08:20', '2025-09-22 09:08:20', 0),
+(3, 5, 1, 'Филма бива', '2025-10-09 21:06:44', '2025-10-09 21:06:44', 0),
+(4, 5, 1, 'Супер', '2025-10-09 21:26:43', '2025-10-09 21:26:43', 0);
 
 -- --------------------------------------------------------
 
@@ -573,7 +564,10 @@ CREATE TABLE IF NOT EXISTS `torrent_ratings` (
 
 INSERT INTO `torrent_ratings` (`torrent_id`, `user_id`, `rating`, `rated_at`) VALUES
 (1, 1, 5, '2025-09-22 09:08:49'),
-(2, 1, 5, '2025-09-23 11:02:15');
+(2, 1, 5, '2025-09-23 11:02:15'),
+(3, 1, 5, '2025-09-25 06:07:29'),
+(4, 1, 5, '2025-10-09 10:02:13'),
+(5, 1, 5, '2025-10-09 12:29:40');
 
 -- --------------------------------------------------------
 
@@ -623,14 +617,15 @@ CREATE TABLE IF NOT EXISTS `users` (
   PRIMARY KEY (`id`),
   UNIQUE KEY `username` (`username`),
   UNIQUE KEY `email` (`email`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
 -- Dumping data for table `users`
 --
 
 INSERT INTO `users` (`id`, `username`, `email`, `password`, `rank`, `created_at`, `last_login`, `language`, `style`, `unread_notifications`) VALUES
-(1, 'crowni', 'crowni@mail.bg', '$argon2id$v=19$m=65536,t=4,p=1$aENGOTlIdDROQ2xHYXpZcQ$Z12RPeaYTBGjl81QrrO5359pyTmR3a/WYbTd4k5v5DU', 6, '2025-09-19 11:31:54', '2025-09-23 11:01:40', 'bg', 'light', 0);
+(1, 'crowni', 'crowni@mail.bg', '$argon2id$v=19$m=65536,t=4,p=1$aENGOTlIdDROQ2xHYXpZcQ$Z12RPeaYTBGjl81QrrO5359pyTmR3a/WYbTd4k5v5DU', 6, '2025-09-19 11:31:54', '2025-10-09 13:50:06', 'bg', 'light', 0),
+(2, 'kosmos', 'kosmos@abv.bg', '$2y$12$DvC/G2gp8XK/u2YlJJAP0OjMFlKEvFJA853NQ0OXiMLHcsiM.Vw2S', 2, '2025-10-09 10:18:41', '2025-10-09 13:20:19', 'bg', 'light', 0);
 
 -- --------------------------------------------------------
 

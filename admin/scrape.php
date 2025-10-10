@@ -60,6 +60,67 @@ $totalPeers = $activeSeeders + $activeLeechers;
 require_once __DIR__ . '/../templates/header.php';
 ?>
 
+<style>
+/* Тъмна навигация */
+.navbar {
+    background-color: #212529 !important;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+}
+
+.navbar-brand,
+.navbar-nav .nav-link {
+    color: #dee2e6 !important;
+}
+
+.navbar-nav .nav-link:hover,
+.navbar-nav .nav-link.active {
+    color: #ffffff !important;
+    background-color: #495057;
+}
+
+/* Заглавие */
+.admin-panel-title {
+    background-color: #0d6efd;
+    color: white;
+    padding: 0.75rem 1rem;
+    margin-bottom: 1rem;
+    border-radius: 4px;
+    font-weight: bold;
+    font-size: 1.3rem;
+}
+
+/* Карти */
+.admin-card {
+    border: 1px solid #dee2e6;
+    border-radius: 8px;
+    margin-bottom: 1rem;
+    overflow: hidden;
+}
+
+/* Цветни заглавия */
+.card-header.bg-primary { background-color: #0d6efd !important; }
+.card-header.bg-success { background-color: #28a745 !important; }
+.card-header.bg-info { background-color: #0dcaf0 !important; }
+.card-header.bg-warning { background-color: #ffc107 !important; color: #212529 !important; }
+.card-header.bg-danger { background-color: #dc3545 !important; }
+.card-header.bg-secondary { background-color: #6c757d !important; }
+.card-header.bg-dark { background-color: #212529 !important; }
+
+/* Пурпурен цвят */
+.bg-purple {
+    background-color: #6f42c1 !important;
+}
+.btn-purple {
+    background-color: #6f42c1;
+    color: white;
+    border-color: #6f42c1;
+}
+.btn-purple:hover {
+    background-color: #5a35a3;
+    border-color: #543196;
+}
+</style>
+
 <div class="container-fluid">
     <h2><?= $lang->get('tracker_statistics') ?></h2>
     <?= $message ?>
