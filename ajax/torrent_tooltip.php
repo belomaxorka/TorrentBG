@@ -6,6 +6,7 @@ if (!isset($_GET['id']) || !is_numeric($_GET['id'])) {
 
 require_once __DIR__ . '/../includes/Database.php';
 require_once __DIR__ . '/../includes/Language.php';
+require_once __DIR__ . '/../includes/functions.php';
 
 $pdo = Database::getInstance();
 $id = (int)$_GET['id'];
@@ -21,18 +22,6 @@ $torrent = $stmt->fetch();
 if (!$torrent) {
     echo '<div class="placeholder">' . htmlspecialchars($lang->get('tooltip_no_data') ?: 'Няма данни') . '</div>';
     exit;
-}
-
-function formatBytes($bytes, $precision = 2) {
-    if ($bytes === 0) return '0 Б';
-    $units = ['Б', 'КБ', 'МБ', 'ГБ', 'ТБ'];
-    $step = 1024;
-    $i = 0;
-    while ($bytes >= $step && $i < count($units) - 1) {
-        $bytes /= $step;
-        $i++;
-    }
-    return round($bytes, $precision) . ' ' . $units[$i];
 }
 ?>
 

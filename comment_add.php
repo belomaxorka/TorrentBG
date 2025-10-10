@@ -1,11 +1,5 @@
 <?php
-require_once __DIR__ . '/includes/Database.php';
-require_once __DIR__ . '/includes/Auth.php';
-require_once __DIR__ . '/includes/Language.php';
-
-$pdo = Database::getInstance();
-$auth = new Auth($pdo);
-$lang = new Language($_SESSION['lang'] ?? 'en');
+require_once __DIR__ . '/includes/bootstrap.php';
 
 if (!$auth->isLoggedIn()) {
     $_SESSION['error'] = $lang->get('login_to_comment');

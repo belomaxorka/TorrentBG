@@ -2,6 +2,7 @@
 require_once __DIR__ . '/../includes/Database.php';
 require_once __DIR__ . '/../includes/Auth.php';
 require_once __DIR__ . '/../includes/Language.php';
+require_once __DIR__ . '/../includes/functions.php';
 
 $pdo = Database::getInstance();
 $auth = new Auth($pdo);
@@ -227,16 +228,5 @@ require_once __DIR__ . '/../templates/header.php';
         </div>
     </div>
 </div>
-
-<?php
-function formatBytes($bytes, $precision = 2) {
-    $units = ['B', 'KB', 'MB', 'GB', 'TB'];
-    $bytes = max($bytes, 0);
-    $pow = floor(($bytes ? log($bytes) : 0) / log(1024));
-    $pow = min($pow, count($units) - 1);
-    $bytes /= (1 << (10 * $pow));
-    return round($bytes, $precision) . ' ' . $units[$pow];
-}
-?>
 
 <?php require_once __DIR__ . '/../templates/footer.php'; ?>

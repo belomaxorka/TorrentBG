@@ -1,0 +1,69 @@
+# Cursor Ignore File
+# Файлы и папки, которые не нужны в контексте AI
+
+# Логи
+logs/
+*.log
+
+# Резервные копии
+backups/
+*.backup
+*.bak
+*~
+
+# Загруженные файлы
+torrents/*.torrent
+uploads/*
+images/posters/*
+subtitles/*
+
+# Временные файлы
+*.tmp
+*.temp
+*.swp
+*.swo
+
+# SQL дампы (кроме схемы)
+sql/old sql/
+
+# Node modules (если появятся)
+node_modules/
+
+# Vendor (если появится Composer)
+vendor/
+
+# OS файлы
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# IDE файлы
+.vscode/
+.idea/
+*.sublime-*
+
+# Git
+.git/
+.gitignore
+.gitattributes
+
+# Документация (уже есть в контексте)
+*.md
+!.cursorrules
+
+# Языковые файлы (не нужны для анализа кода)
+language/*.php
+
+# Категории изображений (много файлов)
+images/categories/*.png
+images/categories/*.gif
+images/forums/*
+images/smiles/*
+
+# Тестовые файлы
+test.php
+test-*.php
+
+# License
+LICENSE
+

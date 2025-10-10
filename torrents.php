@@ -1,24 +1,5 @@
 <?php
-require_once __DIR__ . '/includes/Database.php';
-require_once __DIR__ . '/includes/Auth.php';
-require_once __DIR__ . '/includes/Language.php';
-
-$pdo = Database::getInstance();
-$auth = new Auth($pdo);
-$lang = new Language($_SESSION['lang'] ?? 'en');
-
-// ✅ Функция за форматиране на размер
-function formatBytes($bytes, $precision = 2) {
-    if ($bytes === 0) return '0 Б';
-    $units = ['Б', 'КБ', 'МБ', 'ГБ', 'ТБ'];
-    $step = 1024;
-    $i = 0;
-    while ($bytes >= $step && $i < count($units) - 1) {
-        $bytes /= $step;
-        $i++;
-    }
-    return round($bytes, $precision) . ' ' . $units[$i];
-}
+require_once __DIR__ . '/includes/bootstrap.php';
 
 // ✅ Вземи заявката за търсене
 $searchQuery = trim($_GET['q'] ?? '');

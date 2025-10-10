@@ -130,16 +130,9 @@ namespace Bencode {
 
 // След namespace — преминаваме към глобалното ниво и включваме зависимости
 namespace {
-    require_once __DIR__ . '/includes/Database.php';
-    require_once __DIR__ . '/includes/Auth.php';
-    require_once __DIR__ . '/includes/Language.php';
-    require_once __DIR__ . '/includes/functions.php';
+    require_once __DIR__ . '/includes/bootstrap.php';
 
     use Bencode\Bencode as BencodeParser;
-
-    $pdo = Database::getInstance();
-    $auth = new Auth($pdo);
-    $lang = new Language($_SESSION['lang'] ?? 'en');
 
     if (!$auth->isLoggedIn()) {
         header("Location: login.php");

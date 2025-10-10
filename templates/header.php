@@ -4,14 +4,17 @@ if (!isset($_SERVER['REQUEST_TIME_FLOAT'])) {
     $_SERVER['REQUEST_TIME_FLOAT'] = microtime(true);
 }
 
-// Дефинираме ROOT пътя — основата на проекта
-define('ROOT_PATH', dirname(__DIR__) . DIRECTORY_SEPARATOR);
+// Дефинираме ROOT пътя — основата на проекта (если еще не определен)
+if (!defined('ROOT_PATH')) {
+    define('ROOT_PATH', dirname(__DIR__) . DIRECTORY_SEPARATOR);
+}
 
 // Сега използваме ROOT_PATH за да сочим към правилната директория
 require_once ROOT_PATH . 'includes/Database.php';
 require_once ROOT_PATH . 'includes/Auth.php';
 require_once ROOT_PATH . 'includes/StyleManager.php';
 require_once ROOT_PATH . 'includes/Language.php';
+require_once ROOT_PATH . 'includes/functions.php';
 
 // Инициализираме всичко
 $pdo = Database::getInstance();

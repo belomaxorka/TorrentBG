@@ -1,0 +1,443 @@
+# TorrentPier Project - Cursor Rules
+
+## О проекте
+Торрент-трекер на PHP 8.4 с MySQL/MariaDB. Проект прошел рефакторинг для устранения дублирования кода и улучшения архитектуры, но остается процедурным с элементами ООП. НЕ MVC фреймворк.
+
+## Архитектура
+
+### Текущая структура (после рефакторинга)
+```
+public/
+├── includes/
+│   ├── bootstrap.php      # Точка входа - ВСЕГДА использовать
+│   ├── autoloader.php     # Автозагрузка классов
+│   ├── Application.php    # Singleton управления приложением
+│   ├── Config.php         # Работа с конфигурацией
+│   ├── Database.php       # Singleton PDO
+│   ├── Auth.php           # Аутентификация
+│   ├── Language.php       # Мультиязычность
+│   ├── functions.php      # Общие функции
+│   └── ...
+├── templates/
+│   ├── header.php         # Основной header
+│   └── footer.php
+├── blocks/                # Блоки для главной страницы
+├── admin/                 # Админ-панель
+└── [страницы].php         # Отдельные PHP файлы
+```
+
+### Глобальные объекты (доступны после bootstrap.php)
+- `$pdo` - PDO instance
+- `$auth` - Auth instance
+- `$lang` - Language instance
+- `$styleManager` - StyleManager instance
+- `$app` - Application instance
+
+## ОБЯЗАТЕЛЬНЫЕ ПРАВИЛА
+
+### 1. Инициализация файлов
+✅ **ВСЕГДА** используй bootstrap для новых файлов:
+```php
+<?php
+require_once __DIR__ . '/includes/bootstrap.php';
+// Все зависимости готовы
+```
+
+❌ **НЕ ДЕЛАЙ** так:
+```php
+<?php
+require_once __DIR__ . '/includes/Database.php';
+require_once __DIR__ . '/includes/Auth.php';
+// ... множество require
+```
+
+### 2. Работа с функциями
+✅ **ПРОВЕРЯЙ** существование функции перед определением:
+```php
+if (!function_exists('myFunction')) {
+    function myFunction() { }
+}
+```
+
+✅ **ИСПОЛЬЗУЙ** функции из `includes/functions.php`:
+- `formatBytes()` - форматирование размера файлов
+- `parseBBC()` - парсинг BBCode
+
+❌ **НЕ ДУБЛИРУЙ** функции в разных файлах
+
+### 3. Работа с константами
+✅ **ВСЕГДА** проверяй перед определением:
+```php
+if (!defined('CONSTANT_NAME')) {
+    define('CONSTANT_NAME', 'value');
+}
+```
+
+### 4. HTML-экранирование
+✅ **В шаблонах** ВСЕГДА экранируй вывод:
+```php
+<?= htmlspecialchars($variable) ?>
+<?= htmlspecialchars($lang->get('key')) ?>
+```
+
+✅ **ИЛИ** используй метод `e()` для автоматического экранирования:
+```php
+<?= $lang->e('key') ?>
+```
+
+❌ **НЕ ПОЛАГАЙСЯ** на автоматическое экранирование в `$lang->get()`
+
+### 5. Работа с БД
+✅ **ВСЕГДА** используй prepared statements:
+```php
+$stmt = $pdo->prepare("SELECT * FROM users WHERE id = ?");
+$stmt->execute([$userId]);
+```
+
+✅ **ИСПОЛЬЗУЙ** транзакции для связанных операций:
+```php
+$pdo->beginTransaction();
+try {
+    // операции
+    $pdo->commit();
+} catch (Exception $e) {
+    $pdo->rollback();
+    // обработка ошибки
+}
+```
+
+### 6. Проверка авторизации
+✅ **Стандартный паттерн** проверки:
+```php
+if (!$auth->isLoggedIn()) {
+    header("Location: login.php");
+    exit;
+}
+```
+
+✅ **Проверка прав**:
+```php
+if (!$auth->hasPermission('permission_name')) {
+    die($lang->get('no_permission'));
+}
+```
+
+### 7. Обработка форм
+✅ **POST запросы** обрабатывай в начале файла:
+```php
+if ($_POST['action'] ?? false) {
+    // обработка
+    $_SESSION['success'] = $lang->get('success_message');
+    header("Location: " . $_SERVER['PHP_SELF']);
+    exit;
+}
+```
+
+✅ **Валидация** обязательна:
+```php
+$value = trim($_POST['field'] ?? '');
+if (empty($value)) {
+    $error = $lang->get('field_required');
+}
+```
+
+### 8. Работа с Language
+✅ **Используй ключи** из language файлов:
+```php
+$lang->get('key_name')
+```
+
+✅ **С параметрами**:
+```php
+$lang->get('welcome_user', $username) // "Welcome, %s!"
+```
+
+## ЧТО ДЕЛАТЬ
+
+### ✅ Исправление багов
+1. Найди дублирующие функции → используй одну из `functions.php`
+2. Найди SQL без prepared statements → исправь
+3. Найди XSS уязвимости → добавь `htmlspecialchars()`
+4. Найди необработанные исключения → добавь try-catch
+
+### ✅ Улучшение читаемости
+1. Добавляй комментарии к сложной логике
+2. Разбивай длинные функции на меньшие
+3. Используй говорящие имена переменных
+4. Добавляй type hints где возможно
+
+### ✅ Устранение дублирования
+1. Выноси повторяющуюся логику в функции
+2. Используй `includes/functions.php` для общих функций
+3. Создавай новые классы если логика сложная
+
+## ЧТО НЕ ДЕЛАТЬ
+
+### ❌ НЕ переписывай в MVC
+Проект остается процедурным. НЕ создавай:
+- Controllers/
+- Models/
+- Views/
+- Routes/
+
+### ❌ НЕ меняй глобально работающую логику
+Если что-то работает и не содержит багов - оставь как есть.
+
+### ❌ НЕ добавляй тяжелые зависимости
+Проект без Composer. НЕ предлагай установку:
+- Laravel
+- Symfony
+- Doctrine
+- И других фреймворков
+
+### ❌ НЕ меняй структуру БД без необходимости
+Работай с существующей схемой БД.
+
+### ❌ НЕ удаляй старый функционал
+Если нужно что-то изменить - делай обратно совместимым.
+
+## ПАТТЕРНЫ КОДА
+
+### Создание новой страницы
+```php
+<?php
+require_once __DIR__ . '/includes/bootstrap.php';
+
+// Проверка авторизации (если нужна)
+if (!$auth->isLoggedIn()) {
+    header("Location: login.php");
+    exit;
+}
+
+// Обработка POST (если есть формы)
+if ($_POST['action'] ?? false) {
+    // Валидация
+    // Обработка
+    // Редирект
+    exit;
+}
+
+// Получение данных
+$stmt = $pdo->prepare("SELECT ...");
+$stmt->execute();
+$data = $stmt->fetchAll();
+
+// Подключаем header
+require_once __DIR__ . '/templates/header.php';
+?>
+
+<!-- HTML контент -->
+<div class="container">
+    <h1><?= htmlspecialchars($lang->get('page_title')) ?></h1>
+    <!-- ... -->
+</div>
+
+<?php require_once __DIR__ . '/templates/footer.php'; ?>
+```
+
+### Создание нового блока (для главной)
+```php
+<?php
+// blocks/my_block.php
+if (!defined('IN_BLOCK')) die('Direct access not allowed.');
+
+// Получение данных
+$stmt = $pdo->prepare("SELECT ...");
+$stmt->execute();
+$items = $stmt->fetchAll();
+
+if (empty($items)) {
+    echo '<div class="alert alert-info">' . htmlspecialchars($lang->get('no_items')) . '</div>';
+    return;
+}
+?>
+<div class="card mb-4">
+    <div class="card-header">
+        <?= htmlspecialchars($lang->get('block_title')) ?>
+    </div>
+    <div class="card-body">
+        <!-- Контент блока -->
+    </div>
+</div>
+```
+
+### Создание AJAX endpoint
+```php
+<?php
+require_once __DIR__ . '/includes/bootstrap.php';
+
+// Проверка авторизации
+if (!$auth->isLoggedIn()) {
+    echo json_encode(['success' => false, 'error' => $lang->get('not_authorized')]);
+    exit;
+}
+
+// Валидация
+if (!isset($_POST['data'])) {
+    echo json_encode(['success' => false, 'error' => $lang->get('invalid_data')]);
+    exit;
+}
+
+try {
+    // Обработка
+    $result = processData($_POST['data']);
+    echo json_encode(['success' => true, 'data' => $result]);
+} catch (Exception $e) {
+    echo json_encode(['success' => false, 'error' => $lang->get('error_occurred')]);
+}
+```
+
+### Добавление нового класса
+```php
+<?php
+// includes/MyClass.php
+declare(strict_types=1);
+
+class MyClass
+{
+    private PDO $pdo;
+    
+    public function __construct(PDO $pdo)
+    {
+        $this->pdo = $pdo;
+    }
+    
+    public function doSomething(int $id): array
+    {
+        $stmt = $this->pdo->prepare("SELECT * FROM table WHERE id = ?");
+        $stmt->execute([$id]);
+        return $stmt->fetchAll();
+    }
+}
+```
+
+Затем добавь в `autoloader.php`:
+```php
+$classMap = [
+    // ...
+    'MyClass' => __DIR__ . '/MyClass.php',
+];
+```
+
+## БЕЗОПАСНОСТЬ
+
+### ✅ ВСЕГДА
+1. Используй prepared statements для SQL
+2. Экранируй HTML вывод с `htmlspecialchars()`
+3. Валидируй все входные данные
+4. Проверяй авторизацию и права доступа
+5. Используй `password_hash()` для паролей
+6. Проверяй CSRF токены (TODO: добавить в проект)
+
+### ❌ НИКОГДА
+1. НЕ используй `eval()`
+2. НЕ выводи сырые ошибки пользователю
+3. НЕ храни пароли в открытом виде
+4. НЕ используй `md5()` или `sha1()` для паролей
+5. НЕ доверяй данным от пользователя
+
+## СТИЛЬ КОДА
+
+### PHP
+- Используй `declare(strict_types=1);` в новых классах
+- Type hints для аргументов и возвращаемых значений
+- Camel case для методов: `getUserData()`
+- Pascal case для классов: `UserManager`
+- Snake case для функций: `format_bytes()`
+- Отступы: 4 пробела
+
+### SQL
+- Используй заглавные буквы для ключевых слов: `SELECT`, `FROM`, `WHERE`
+- Форматируй сложные запросы:
+```php
+$sql = "
+    SELECT u.username, t.name, t.size
+    FROM users u
+    JOIN torrents t ON u.id = t.uploader_id
+    WHERE u.is_active = 1
+    ORDER BY t.uploaded_at DESC
+";
+```
+
+### HTML
+- Bootstrap 5.3.3 для стилей
+- Bootstrap Icons для иконок
+- Responsive дизайн обязателен
+
+## ЛОГИРОВАНИЕ
+
+### Для отладки
+```php
+error_log("Debug: " . print_r($variable, true));
+```
+
+### Для ошибок
+```php
+try {
+    // код
+} catch (Exception $e) {
+    error_log("Error: " . $e->getMessage());
+    $_SESSION['error'] = $lang->get('error_occurred');
+}
+```
+
+## ТЕСТИРОВАНИЕ
+
+### Перед коммитом проверь:
+1. ✅ Страница загружается без ошибок
+2. ✅ Нет PHP warnings в логах
+3. ✅ SQL запросы используют prepared statements
+4. ✅ HTML вывод экранирован
+5. ✅ Авторизация работает корректно
+6. ✅ Формы обрабатываются правильно
+
+## ДОКУМЕНТАЦИЯ
+
+### Комментируй сложную логику
+```php
+/**
+ * Обрабатывает загрузку торрент файла
+ * 
+ * @param array $file $_FILES['torrent']
+ * @param int $userId ID пользователя
+ * @return array|string Массив с данными или строка с ошибкой
+ */
+function processTorrentUpload(array $file, int $userId): array|string
+{
+    // Проверка файла
+    if ($file['error'] !== UPLOAD_ERR_OK) {
+        return 'Upload error';
+    }
+    
+    // ... остальная логика
+}
+```
+
+## ПРИОРИТЕТЫ
+
+1. **Безопасность** > функциональность
+2. **Читаемость** > оптимизация
+3. **Простота** > сложность
+4. **Обратная совместимость** > новые фичи
+
+## ПОЛЕЗНЫЕ ФАЙЛЫ
+
+- `REFACTORING.md` - описание рефакторинга
+- `MIGRATION_GUIDE.md` - руководство по использованию
+- `BUGFIXES.md` - исправленные баги
+- `config.php` - конфигурация проекта
+
+## ПОМОЩЬ
+
+При возникновении вопросов:
+1. Проверь существующий код - есть ли похожий функционал
+2. Посмотри документацию в markdown файлах
+3. Используй паттерны из этого файла
+4. Помни: простое решение лучше сложного
+
+---
+
+**Версия:** 1.0  
+**Последнее обновление:** 2025-10-10  
+**Статус проекта:** Рефакторинг завершен, активная разработка
+

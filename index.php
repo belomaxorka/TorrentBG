@@ -1,10 +1,8 @@
 <?php
+require_once __DIR__ . '/includes/bootstrap.php';
 require_once __DIR__ . '/templates/header.php';
-require_once __DIR__ . '/includes/BlockManager.php';
 
-$lang = new Language($_SESSION['lang'] ?? 'en');
-
-// Инициализираме BlockManager
+// Инициализируем BlockManager
 $blockManager = new BlockManager($pdo);
 
 // Главно съдържание
