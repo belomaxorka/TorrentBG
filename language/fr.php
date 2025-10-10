@@ -3,7 +3,7 @@
 return [
     // Общи
     'site_title' => 'TorrentBG',
-    'welcome' => 'Bienvenue, %s!',
+    'welcome' => 'Bienvenue!',
     'login' => 'Connexion',
     'register' => 'Inscription',
     'logout' => 'Déconnexion',
@@ -470,4 +470,46 @@ return [
 'november' => 'Novembre',
 'december' => 'Décembre',
 'name' => 'Nom',
+
+'torrent_name' => 'Nom du torrent',
+'torrent_name_help' => 'Entrez le nom qui sera affiché lors du téléchargement du torrent',
+'is_required' => 'est requis',
+
+// ... други преводи ...
+    'tooltip_seeds' => 'Cèdres',
+    'tooltip_leechers' => 'Sangsues',
+    'tooltip_size' => 'Taille',
+    'tooltip_no_poster' => 'Pas d affiche',
+    'tooltip_no_data' => 'Aucune donnée',
+	
+	    'username_required' => 'Le nom d\'utilisateur est requis.',
+    'email_required' => 'L\'email est requis.',
+    'password_required' => 'Le mot de passe est requis.',
+    'passwords_dont_match' => 'Les mots de passe ne correspondent pas.',
+    'password_too_short' => 'Le mot de passe doit contenir au moins 6 caractères.',
+    'invalid_email_format' => 'Format d\'email invalide.',
+    'username_length_invalid' => 'Le nom d\'utilisateur doit contenir entre 3 et 20 caractères.',
+    'user_or_email_exists' => 'Le nom d\'utilisateur ou l\'email existe déjà.',
+    'registration_error' => 'L\'inscription a échoué. Veuillez réessayer.',
+    'registration_success' => 'Inscription réussie ! Vous pouvez maintenant vous connecter.',
+    'go_to_login' => 'Aller à la page de connexion',
+    'already_have_account' => 'Vous avez déjà un compte ? Connectez-vous ici.',
+    'password_help' => 'Le mot de passe doit contenir au moins 6 caractères.',
+	
+	'search_placeholder' => 'Rechercher...',
+    'search_button' => 'Rechercher',
+	
+	'comments' => 'Commentaires',
+'add_your_comment' => 'Ajoutez votre commentaire',
+'write_comment' => 'Écrivez un commentaire...',
+'no_comments_yet' => 'Aucun commentaire pour le moment.',
+'post_comment' => 'Publier',
+'bbc_codes_supported' => 'Codes BBC pris en charge : [b], [i], [u], [url], [img]',
+'edit' => 'Modifier',
+'delete' => 'Supprimer',
+'edited' => 'modifié',
+'confirm_delete' => 'Êtes-vous sûr de vouloir supprimer ce commentaire ?',
+'edit_comment' => 'Modifier le commentaire',
+'cancel' => 'Annuler',
+'save' => 'Enregistrer',
 ];

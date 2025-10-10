@@ -3,7 +3,7 @@
 return [
     // Общи
     'site_title' => 'TorrentBG',
-    'welcome' => 'Добро пожаловать, %s!',
+    'welcome' => 'Добро пожаловать!',
     'login' => 'Вход',
     'register' => 'Регистрация',
     'logout' => 'Выход',
@@ -63,7 +63,7 @@ return [
 
     // Блокове
     'please_login' => 'Пожалуйста, войдите, чтобы увидеть вашу информацию.',
-    'user_info' => 'Информация о пользователе',
+    'user_info' => 'Инфо. о пользователе',
     'guest' => 'Гость',
     'user' => 'Пользователь',
     'uploader' => 'Загружающий',
@@ -78,6 +78,7 @@ return [
     'edit_profile' => 'Редактировать профиль',
     'clock' => 'Часы',
     'manage_blocks' => 'Управление блоками',
+	'online_users_and_bots' => 'Пользователи онлайн',
     'add_new_block' => 'Добавить новый блок',
     'block_name' => 'Имя блока',
     'block_title' => 'Заголовок блока',
@@ -470,4 +471,49 @@ return [
 'november' => 'Ноябрь',
 'december' => 'Декабрь',
 'name' => 'Имя',
+
+'torrent_name' => 'Название торрента',
+'torrent_name_help' => 'Введите имя, которое будет отображаться при загрузке торрента.',
+'is_required' => 'требуется',
+'torrent_file' => 'Торрент-файл',
+
+'bbc_codes_supported' => 'Поддерживаемые коды BBC: [b], [i], [u], [url], [img]',
+
+// ... други преводи ...
+    'tooltip_seeds' => 'Сийдеры',
+    'tooltip_leechers' => 'Личеры',
+    'tooltip_size' => 'Размер',
+    'tooltip_no_poster' => 'Нет постера',
+    'tooltip_no_data' => 'Нет данных',
+	
+	'username_required' => 'Имя пользователя обязательно.',
+    'email_required' => 'Email обязателен.',
+    'password_required' => 'Пароль обязателен.',
+    'passwords_dont_match' => 'Пароли не совпадают.',
+    'password_too_short' => 'Пароль должен содержать не менее 6 символов.',
+    'invalid_email_format' => 'Неверный формат email.',
+    'username_length_invalid' => 'Имя пользователя должно быть от 3 до 20 символов.',
+    'user_or_email_exists' => 'Имя пользователя или email уже существуют.',
+    'registration_error' => 'Регистрация не удалась. Пожалуйста, попробуйте снова.',
+    'registration_success' => 'Регистрация прошла успешно! Теперь вы можете войти.',
+    'go_to_login' => 'Перейти к странице входа',
+    'already_have_account' => 'Уже есть аккаунт? Войдите здесь.',
+    'password_help' => 'Пароль должен содержать не менее 6 символов.',
+	
+	'search_placeholder' => 'Поиск...',
+    'search_button' => 'Найти',
+	
+	'comments' => 'Комментарии',
+'add_your_comment' => 'Добавьте ваш комментарий',
+'write_comment' => 'Напишите комментарий...',
+'no_comments_yet' => 'Комментариев пока нет.',
+'post_comment' => 'Опубликовать',
+'bbc_codes_supported' => 'Поддерживаются BBC-коды: [b], [i], [u], [url], [img]',
+'edit' => 'Редактировать',
+'delete' => 'Удалить',
+'edited' => 'изменено',
+'confirm_delete' => 'Вы уверены, что хотите удалить этот комментарий?',
+'edit_comment' => 'Редактировать комментарий',
+'cancel' => 'Отмена',
+'save' => 'Сохранить',
 ];

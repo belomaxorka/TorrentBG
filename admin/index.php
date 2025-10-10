@@ -22,8 +22,70 @@ $pendingTranslations = $pdo->query("SELECT COUNT(*) FROM translations WHERE stat
 require_once __DIR__ . '/../templates/header.php';
 ?>
 
+<!-- ✅ ВГРАДЕН CSS ЗА АДМИН ПАНЕЛ -->
+<style>
+/* Тъмна навигация */
+.navbar {
+    background-color: #212529 !important;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+}
+
+.navbar-brand,
+.navbar-nav .nav-link {
+    color: #dee2e6 !important;
+}
+
+.navbar-nav .nav-link:hover,
+.navbar-nav .nav-link.active {
+    color: #ffffff !important;
+    background-color: #495057;
+}
+
+/* Заглавие */
+.admin-panel-title {
+    background-color: #0d6efd;
+    color: white;
+    padding: 0.75rem 1rem;
+    margin-bottom: 1rem;
+    border-radius: 4px;
+    font-weight: bold;
+    font-size: 1.3rem;
+}
+
+/* Карти */
+.admin-card {
+    border: 1px solid #dee2e6;
+    border-radius: 8px;
+    margin-bottom: 1rem;
+    overflow: hidden;
+}
+
+/* Цветни заглавия */
+.card-header.bg-primary { background-color: #0d6efd !important; }
+.card-header.bg-success { background-color: #28a745 !important; }
+.card-header.bg-info { background-color: #0dcaf0 !important; }
+.card-header.bg-warning { background-color: #ffc107 !important; color: #212529 !important; }
+.card-header.bg-danger { background-color: #dc3545 !important; }
+.card-header.bg-secondary { background-color: #6c757d !important; }
+.card-header.bg-dark { background-color: #212529 !important; }
+
+/* Пурпурен цвят */
+.bg-purple {
+    background-color: #6f42c1 !important;
+}
+.btn-purple {
+    background-color: #6f42c1;
+    color: white;
+    border-color: #6f42c1;
+}
+.btn-purple:hover {
+    background-color: #5a35a3;
+    border-color: #543196;
+}
+</style>
+
 <div class="container-fluid">
-    <h2 class="mb-4">🛠️ <?= $lang->get('admin_control_panel') ?></h2>
+    <h2 class="mb-4 admin-panel-title">🛠️ <?= $lang->get('admin_control_panel') ?></h2>
     
     <div class="alert alert-info">
         <?= $lang->get('welcome_admin') ?>, <strong><?= htmlspecialchars($auth->getUser()['username']) ?></strong>!
@@ -32,9 +94,9 @@ require_once __DIR__ . '/../templates/header.php';
     <div class="row">
         <!-- Статистики -->
         <div class="col-md-6 mb-4">
-            <div class="card">
-                <div class="card-header">
-                    <h4>📊 <?= $lang->get('statistics') ?></h4>
+            <div class="card admin-card h-100">
+                <div class="card-header bg-primary text-white">
+                    <h4 class="mb-0">📊 <?= $lang->get('statistics') ?></h4>
                 </div>
                 <div class="card-body">
                     <ul class="list-group list-group-flush">
@@ -65,33 +127,33 @@ require_once __DIR__ . '/../templates/header.php';
 
         <!-- Бързи линкове -->
         <div class="col-md-6 mb-4">
-            <div class="card">
-                <div class="card-header">
-                    <h4>⚡ <?= $lang->get('quick_links') ?></h4>
+            <div class="card admin-card h-100">
+                <div class="card-header bg-purple text-white">
+                    <h4 class="mb-0">⚡ <?= $lang->get('quick_links') ?></h4>
                 </div>
                 <div class="card-body">
                     <div class="d-grid gap-2">
-                        <a href="/admin/users.php" class="btn btn-outline-primary"><?= $lang->get('manage_users') ?></a>
-                        <a href="/admin/ranks.php" class="btn btn-outline-primary"><?= $lang->get('manage_ranks_permissions') ?></a>
-                        <a href="/admin/torrents.php" class="btn btn-outline-primary"><?= $lang->get('manage_torrents') ?></a>
-                        <a href="/admin/forums.php" class="btn btn-outline-primary"><?= $lang->get('manage_forums') ?></a>
-                        <a href="/admin/categories.php" class="btn btn-outline-primary"><?= $lang->get('manage_categories') ?></a>
-                        <a href="/admin/blocks.php" class="btn btn-outline-primary"><?= $lang->get('manage_blocks') ?></a>
-                        <a href="/admin/polls.php" class="btn btn-outline-primary"><?= $lang->get('manage_polls') ?></a>
-                        <a href="/admin/translations.php" class="btn btn-outline-primary"><?= $lang->get('manage_translations') ?></a>
-                        <a href="/admin/scrape.php" class="btn btn-outline-primary"><?= $lang->get('tracker_statistics') ?></a>
+                        <a href="/admin/users.php" class="btn btn-primary"><?= $lang->get('manage_users') ?></a>
+                        <a href="/admin/ranks.php" class="btn btn-success"><?= $lang->get('manage_ranks_permissions') ?></a>
+                        <a href="/admin/torrents.php" class="btn btn-info"><?= $lang->get('manage_torrents') ?></a>
+                        <a href="/admin/forums.php" class="btn btn-warning"><?= $lang->get('manage_forums') ?></a>
+                        <a href="/admin/categories.php" class="btn btn-secondary"><?= $lang->get('manage_categories') ?></a>
+                        <a href="/admin/blocks.php" class="btn btn-danger"><?= $lang->get('manage_blocks') ?></a>
+                        <a href="/admin/polls.php" class="btn btn-dark"><?= $lang->get('manage_polls') ?></a>
+                        <a href="/admin/translations.php" class="btn btn-purple"><?= $lang->get('manage_translations') ?></a>
+                        <a href="/admin/scrape.php" class="btn btn-primary"><?= $lang->get('tracker_statistics') ?></a>
                     </div>
                 </div>
             </div>
         </div>
     </div>
 
+    <!-- Останалите редове са същите, но с цветни заглавия -->
     <div class="row">
-        <!-- Управление на потребители -->
         <div class="col-md-4 mb-4">
-            <div class="card h-100">
+            <div class="card admin-card h-100">
                 <div class="card-header bg-primary text-white">
-                    <h5>👥 <?= $lang->get('user_management') ?></h5>
+                    <h5 class="mb-0">👥 <?= $lang->get('user_management') ?></h5>
                 </div>
                 <div class="card-body">
                     <p class="card-text"><?= $lang->get('manage_users_and_ranks') ?></p>
@@ -100,11 +162,10 @@ require_once __DIR__ . '/../templates/header.php';
             </div>
         </div>
 
-        <!-- ✅ Управление на рангове и права — НОВА КАРТА -->
         <div class="col-md-4 mb-4">
-            <div class="card h-100">
+            <div class="card admin-card h-100">
                 <div class="card-header bg-success text-white">
-                    <h5>🛡️ <?= $lang->get('manage_ranks_permissions') ?></h5>
+                    <h5 class="mb-0">🛡️ <?= $lang->get('manage_ranks_permissions') ?></h5>
                 </div>
                 <div class="card-body">
                     <p class="card-text"><?= $lang->get('manage_ranks_description') ?></p>
@@ -113,11 +174,10 @@ require_once __DIR__ . '/../templates/header.php';
             </div>
         </div>
 
-        <!-- Управление на торенти -->
         <div class="col-md-4 mb-4">
-            <div class="card h-100">
+            <div class="card admin-card h-100">
                 <div class="card-header bg-info text-white">
-                    <h5>🌀 <?= $lang->get('torrent_management') ?></h5>
+                    <h5 class="mb-0">🌀 <?= $lang->get('torrent_management') ?></h5>
                 </div>
                 <div class="card-body">
                     <p class="card-text"><?= $lang->get('manage_torrents_categories') ?></p>
@@ -129,11 +189,10 @@ require_once __DIR__ . '/../templates/header.php';
     </div>
 
     <div class="row">
-        <!-- Управление на форуми -->
         <div class="col-md-4 mb-4">
-            <div class="card h-100">
+            <div class="card admin-card h-100">
                 <div class="card-header bg-warning text-dark">
-                    <h5>💬 <?= $lang->get('forum_management') ?></h5>
+                    <h5 class="mb-0">💬 <?= $lang->get('forum_management') ?></h5>
                 </div>
                 <div class="card-body">
                     <p class="card-text"><?= $lang->get('manage_forums_and_topics') ?></p>
@@ -142,11 +201,10 @@ require_once __DIR__ . '/../templates/header.php';
             </div>
         </div>
 
-        <!-- Управление на блокове -->
         <div class="col-md-4 mb-4">
-            <div class="card h-100">
+            <div class="card admin-card h-100">
                 <div class="card-header bg-danger text-white">
-                    <h5>🧱 <?= $lang->get('block_management') ?></h5>
+                    <h5 class="mb-0">🧱 <?= $lang->get('block_management') ?></h5>
                 </div>
                 <div class="card-body">
                     <p class="card-text"><?= $lang->get('manage_blocks_positions') ?></p>
@@ -155,11 +213,10 @@ require_once __DIR__ . '/../templates/header.php';
             </div>
         </div>
 
-        <!-- Управление на преводи -->
         <div class="col-md-4 mb-4">
-            <div class="card h-100">
+            <div class="card admin-card h-100">
                 <div class="card-header bg-secondary text-white">
-                    <h5>🌍 <?= $lang->get('translation_management') ?></h5>
+                    <h5 class="mb-0">🌍 <?= $lang->get('translation_management') ?></h5>
                 </div>
                 <div class="card-body">
                     <p class="card-text"><?= $lang->get('manage_community_translations') ?></p>
@@ -171,11 +228,10 @@ require_once __DIR__ . '/../templates/header.php';
     </div>
 
     <div class="row">
-        <!-- Тракер статистики -->
         <div class="col-md-6 mb-4">
-            <div class="card h-100">
+            <div class="card admin-card h-100">
                 <div class="card-header bg-dark text-white">
-                    <h5>📈 <?= $lang->get('tracker_management') ?></h5>
+                    <h5 class="mb-0">📈 <?= $lang->get('tracker_management') ?></h5>
                 </div>
                 <div class="card-body">
                     <p class="card-text"><?= $lang->get('view_tracker_statistics') ?></p>
@@ -184,32 +240,18 @@ require_once __DIR__ . '/../templates/header.php';
             </div>
         </div>
 
-        <!-- Системни настройки -->
         <div class="col-md-6 mb-4">
-            <div class="card h-100">
-                <div class="card-header bg-purple text-white" style="background-color: #6f42c1;">
-                    <h5>⚙️ <?= $lang->get('system_settings') ?></h5>
+            <div class="card admin-card h-100">
+                <div class="card-header bg-purple text-white">
+                    <h5 class="mb-0">⚙️ <?= $lang->get('system_settings') ?></h5>
                 </div>
                 <div class="card-body">
                     <p class="card-text"><?= $lang->get('coming_soon') ?></p>
-                    <button class="btn btn-purple" disabled style="background-color: #6f42c1; color: white;"><?= $lang->get('settings') ?></button>
+                    <button class="btn btn-purple" disabled><?= $lang->get('settings') ?></button>
                 </div>
             </div>
         </div>
     </div>
 </div>
-
-<style>
-.bg-purple {
-    background-color: #6f42c1;
-}
-.btn-purple {
-    background-color: #6f42c1;
-    color: white;
-}
-.btn-purple:hover {
-    background-color: #5a35a3;
-}
-</style>
 
 <?php require_once __DIR__ . '/../templates/footer.php'; ?>

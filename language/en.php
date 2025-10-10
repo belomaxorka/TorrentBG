@@ -2,7 +2,7 @@
 // English (default language)
 return [
     'site_title' => 'TorrentBG',
-    'welcome' => 'Welcome, %s!',
+    'welcome' => 'Welcome!',
     'login' => 'Login',
     'register' => 'Register',
     'logout' => 'Logout',
@@ -477,4 +477,57 @@ return [
 'users' => 'users',
 'rank' => 'rank',
 'actions' => 'actions',
+'rating' => 'Rating',
+
+'completed' => 'Completed',
+
+'torrent_name' => 'Torrent Name',
+'torrent_name_help' => 'Enter the name that will be shown when downloading the torrent',
+'is_required' => 'is required',
+
+// ... other translations ...
+    'tooltip_seeds' => 'Seeders',
+    'tooltip_leechers' => 'Leechers',
+    'tooltip_size' => 'Size',
+    'tooltip_no_poster' => 'No poster',
+    'tooltip_no_data' => 'No data',
+	
+	'username_required' => 'Username is required.',
+'email_required' => 'Email is required.',
+'password_required' => 'Password is required.',
+'passwords_dont_match' => 'Passwords do not match.',
+'password_too_short' => 'Password must be at least 6 characters.',
+'invalid_email_format' => 'Invalid email format.',
+'username_length_invalid' => 'Username must be between 3 and 20 characters.',
+'user_or_email_exists' => 'Username or email already exists.',
+'registration_error' => 'Registration failed. Please try again.',
+'registration_success' => 'Registration successful! You can now log in.',
+'go_to_login' => 'Go to login page',
+'already_have_account' => 'Already have an account? Log in here.',
+'password_help' => 'Password must be at least 6 characters.',
+
+'search_placeholder' => 'Search...',
+'search_button' => 'Search',
+
+'size' => 'Size',
+'uploaded' => 'Uploaded on',
+'description' => 'Description',
+'download_torrent' => 'Download Torrent',
+'back_to_torrents' => 'Back to Torrents',
+'invalid_torrent_id' => 'Invalid torrent ID.',
+'torrent_not_found' => 'Torrent not found.',
+
+'comments' => 'Comments',
+'add_your_comment' => 'Add your comment',
+'write_comment' => 'Write a comment...',
+'no_comments_yet' => 'No comments yet.',
+'post_comment' => 'Post',
+'bbc_codes_supported' => 'BBC codes supported: [b], [i], [u], [url], [img]',
+'edit' => 'Edit',
+'delete' => 'Delete',
+'edited' => 'edited',
+'confirm_delete' => 'Are you sure you want to delete this comment?',
+'edit_comment' => 'Edit Comment',
+'cancel' => 'Cancel',
+'save' => 'Save',
 ];   

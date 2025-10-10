@@ -3,7 +3,7 @@
 return [
     // Общи
     'site_title' => 'TorrentBG',
-    'welcome' => 'Willkommen, %s!',
+    'welcome' => 'Willkommen!',
     'login' => 'Anmelden',
     'register' => 'Registrieren',
     'logout' => 'Abmelden',
@@ -470,4 +470,46 @@ return [
 'november' => 'November',
 'december' => 'Dezember',
 'name' => 'Name',
+
+'torrent_name' => 'Torrent Name',
+'torrent_name_help' => 'Geben Sie den Namen ein, der beim Herunterladen des Torrents angezeigt wird',
+'is_required' => 'ist erforderlich',
+
+// ... други преводи ...
+    'tooltip_seeds' => 'Zedern',
+    'tooltip_leechers' => 'Blutegel',
+    'tooltip_size' => 'Größe',
+    'tooltip_no_poster' => 'Kein Poster',
+    'tooltip_no_data' => 'Keine Daten',
+	
+	'username_required' => 'Benutzername ist erforderlich.',
+    'email_required' => 'E-Mail ist erforderlich.',
+    'password_required' => 'Passwort ist erforderlich.',
+    'passwords_dont_match' => 'Passwörter stimmen nicht überein.',
+    'password_too_short' => 'Passwort muss mindestens 6 Zeichen lang sein.',
+    'invalid_email_format' => 'Ungültiges E-Mail-Format.',
+    'username_length_invalid' => 'Benutzername muss zwischen 3 und 20 Zeichen lang sein.',
+    'user_or_email_exists' => 'Benutzername oder E-Mail existiert bereits.',
+    'registration_error' => 'Registrierung fehlgeschlagen. Bitte versuchen Sie es erneut.',
+    'registration_success' => 'Registrierung erfolgreich! Sie können sich jetzt anmelden.',
+    'go_to_login' => 'Zur Login-Seite gehen',
+    'already_have_account' => 'Haben Sie bereits ein Konto? Melden Sie sich hier an.',
+    'password_help' => 'Passwort muss mindestens 6 Zeichen lang sein.',
+	
+	'search_placeholder' => 'Suche...',
+    'search_button' => 'Suchen',
+	
+	'comments' => 'Kommentare',
+'add_your_comment' => 'Fügen Sie Ihren Kommentar hinzu',
+'write_comment' => 'Schreiben Sie einen Kommentar...',
+'no_comments_yet' => 'Noch keine Kommentare.',
+'post_comment' => 'Absenden',
+'bbc_codes_supported' => 'BBC-Codes werden unterstützt: [b], [i], [u], [url], [img]',
+'edit' => 'Bearbeiten',
+'delete' => 'Löschen',
+'edited' => 'bearbeitet',
+'confirm_delete' => 'Möchten Sie diesen Kommentar wirklich löschen?',
+'edit_comment' => 'Kommentar bearbeiten',
+'cancel' => 'Abbrechen',
+'save' => 'Speichern',
 ];
