@@ -7,11 +7,11 @@ function updateClock() {
     document.getElementById('current-time')?.textContent = `${hours}:${minutes}:${seconds}`;
 }
 
-// Обновяване на часовника
+// РћР±РЅРѕРІСЏРІР°РЅРµ РЅР° С‡Р°СЃРѕРІРЅРёРєР°
 setInterval(updateClock, 1000);
 updateClock();
 
-// Обновяване на shoutbox
+// РћР±РЅРѕРІСЏРІР°РЅРµ РЅР° shoutbox
 function loadShoutboxMessages() {
     fetch('/shoutbox.php?action=get')
     .then(r => r.text())
@@ -24,5 +24,5 @@ function loadShoutboxMessages() {
     });
 }
 
-// На всеки 10 секунди
+// РќР° РІСЃРµРєРё 10 СЃРµРєСѓРЅРґРё
 setInterval(loadShoutboxMessages, 10000);
