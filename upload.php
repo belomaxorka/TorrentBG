@@ -1,5 +1,5 @@
 <?php
-// œ˙‚Ó ó ‰ÂÙËÌË‡ÏÂ namespace Bencode
+// –ü—ä—Ä–≤–æ ‚Äî –¥–µ—Ñ–∏–Ω–∏—Ä–∞–º–µ namespace Bencode
 namespace Bencode {
     class Bencode {
         public static function decode($string) {
@@ -131,7 +131,7 @@ namespace Bencode {
     }
 }
 
-// —ÎÂ‰ namespace ó ÔÂÏËÌ‡‚‡ÏÂ Í˙Ï „ÎÓ·‡ÎÌÓÚÓ ÌË‚Ó Ë ‚ÍÎ˛˜‚‡ÏÂ Á‡‚ËÒËÏÓÒÚË
+// –°–ª–µ–¥ namespace ‚Äî –ø—Ä–µ–º–∏–Ω–∞–≤–∞–º–µ –∫—ä–º –≥–ª–æ–±–∞–ª–Ω–æ—Ç–æ –Ω–∏–≤–æ –∏ –≤–∫–ª—é—á–≤–∞–º–µ –∑–∞–≤–∏—Å–∏–º–æ—Å—Ç–∏
 namespace {
     require_once __DIR__ . '/includes/Database.php';
     require_once __DIR__ . '/includes/Auth.php';
@@ -149,7 +149,7 @@ namespace {
         exit;
     }
 
-    // === ƒŒ¡¿¬≈ÕŒ: ¬ÁÂÏË ‡ÌÓÌÒ URL ÓÚ Ì‡ÒÚÓÈÍËÚÂ ===
+    // === –î–û–ë–ê–í–ï–ù–û: –í–∑–µ–º–∏ –∞–Ω–æ–Ω—Å URL –æ—Ç –Ω–∞—Å—Ç—Ä–æ–π–∫–∏—Ç–µ ===
     $stmt = $pdo->prepare("SELECT value FROM settings WHERE name = 'tracker_announce'");
     $stmt->execute();
     $announceUrl = $stmt->fetchColumn();
@@ -158,15 +158,15 @@ namespace {
     $error = '';
     $success = false;
 
-    // »Á‚ÎË˜‡ÏÂ Í‡ÚÂ„ÓËËÚÂ
+    // –ò–∑–≤–ª–∏—á–∞–º–µ –∫–∞—Ç–µ–≥–æ—Ä–∏–∏—Ç–µ
     $stmt = $pdo->query("SELECT id, name, icon FROM categories WHERE is_active = 1 ORDER BY `order`");
     $categories = $stmt->fetchAll();
 
     if ($_POST['upload'] ?? false) {
-        // ¬ÁÂÏË ËÏÂÚÓ ÓÚ ÙÓÏ‡Ú‡ ó Á‡‰˙ÎÊËÚÂÎÌÓ
+        // –í–∑–µ–º–∏ –∏–º–µ—Ç–æ –æ—Ç —Ñ–æ—Ä–º–∞—Ç–∞ ‚Äî –∑–∞–¥—ä–ª–∂–∏—Ç–µ–ª–Ω–æ
         $name = trim($_POST['torrent_name'] ?? '');
         if (empty($name)) {
-            $error = $lang->get('torrent_name') . ' ' . ($lang->get('is_required') ?? 'Â Á‡‰˙ÎÊËÚÂÎÌÓ');
+            $error = $lang->get('torrent_name') . ' ' . ($lang->get('is_required') ?? '–µ –∑–∞–¥—ä–ª–∂–∏—Ç–µ–ª–Ω–æ');
         } else {
             if (!isset($_FILES['torrent_file']) || $_FILES['torrent_file']['error'] !== UPLOAD_ERR_OK) {
                 $error = $lang->get('select_torrent_file');
@@ -180,10 +180,10 @@ namespace {
                 } elseif ($file['size'] > $maxSize) {
                     $error = $lang->get('file_too_large');
                 } else {
-                    // œ‡Ò‚‡ÏÂ .torrent Ù‡ÈÎ‡
+                    // –ü–∞—Ä—Å–≤–∞–º–µ .torrent —Ñ–∞–π–ª–∞
                     $torrentData = file_get_contents($file['tmp_name']);
                     if ($torrentData === false) {
-                        $error = $lang->get('upload_failed') . ': ÕÂ ÏÓÊÂ ‰‡ ÒÂ ÔÓ˜ÂÚÂ Ù‡ÈÎ‡.';
+                        $error = $lang->get('upload_failed') . ': –ù–µ –º–æ–∂–µ –¥–∞ —Å–µ –ø—Ä–æ—á–µ—Ç–µ —Ñ–∞–π–ª–∞.';
                     } else {
                         try {
                             $decoded = BencodeParser::decode($torrentData);
@@ -196,18 +196,18 @@ namespace {
                         } else {
                             $info = $decoded['info'];
 
-                            // ?? ƒŒ¡¿¬≈ÕŒ: œÓ‚ÂÍ‡ ‰‡ÎË $info Â Ï‡ÒË‚
+                            // ?? –î–û–ë–ê–í–ï–ù–û: –ü—Ä–æ–≤–µ—Ä–∫–∞ –¥–∞–ª–∏ $info –µ –º–∞—Å–∏–≤
                             if (!is_array($info)) {
                                 $error = $lang->get('invalid_torrent_structure');
                             } else {
                                 $size = calculateTorrentSize($info);
                                 $filesCount = isset($info['files']) ? count($info['files']) : 1;
 
-                                // √ÂÌÂË‡ÏÂ info_hash Í‡ÚÓ HEX (40 ÒËÏ‚ÓÎ‡)
+                                // –ì–µ–Ω–µ—Ä–∏—Ä–∞–º–µ info_hash –∫–∞—Ç–æ HEX (40 —Å–∏–º–≤–æ–ª–∞)
                                 $infoBencoded = BencodeParser::encode($info);
-                                $infoHash = sha1($infoBencoded); // < ·ÂÁ ‚ÚÓËˇ Ô‡‡ÏÂÚ˙ > HEX
+                                $infoHash = sha1($infoBencoded); // < –±–µ–∑ –≤—Ç–æ—Ä–∏—è –ø–∞—Ä–∞–º–µ—Ç—ä—Ä > HEX
 
-                                //  ‡˜‚‡ÏÂ ÔÓÒÚÂ ‡ÍÓ ËÏ‡
+                                // –ö–∞—á–≤–∞–º–µ –ø–æ—Å—Ç–µ—Ä –∞–∫–æ –∏–º–∞
                                 $posterPath = null;
                                 if (isset($_FILES['poster']) && $_FILES['poster']['error'] === UPLOAD_ERR_OK) {
                                     $poster = $_FILES['poster'];
@@ -222,7 +222,7 @@ namespace {
                                     }
                                 }
 
-                                // ¬‡ÎË‰Ë‡ÏÂ Í‡ÚÂ„ÓËˇÚ‡
+                                // –í–∞–ª–∏–¥–∏—Ä–∞–º–µ –∫–∞—Ç–µ–≥–æ—Ä–∏—è—Ç–∞
                                 $categoryId = (int)($_POST['category_id'] ?? 1);
                                 $validCategory = false;
                                 foreach ($categories as $cat) {
@@ -235,7 +235,7 @@ namespace {
                                     $categoryId = 1; // Default category
                                 }
 
-                                // «‡ÔËÒ‚‡ÏÂ ‚ ·‡Á‡Ú‡
+                                // –ó–∞–ø–∏—Å–≤–∞–º–µ –≤ –±–∞–∑–∞—Ç–∞
                                 try {
                                     $stmt = $pdo->prepare("
                                         INSERT INTO torrents 
@@ -298,7 +298,7 @@ namespace {
                     <?php endif; ?>
 
                     <form method="POST" enctype="multipart/form-data">
-                        <!-- Œ„‡ÌË˜‡‚‡ÏÂ Ï‡ÍÒËÏ‡ÎÌËˇ ‡ÁÏÂ Ì‡ Ù‡ÈÎ‡ Ì‡ 5MB -->
+                        <!-- –û–≥—Ä–∞–Ω–∏—á–∞–≤–∞–º–µ –º–∞–∫—Å–∏–º–∞–ª–Ω–∏—è —Ä–∞–∑–º–µ—Ä –Ω–∞ —Ñ–∞–π–ª–∞ –Ω–∞ 5MB -->
                         <input type="hidden" name="MAX_FILE_SIZE" value="5242880">
 
                         <div class="mb-3">
@@ -342,11 +342,11 @@ namespace {
                             <input type="url" name="youtube_link" class="form-control" placeholder="https://www.youtube.com/watch?v=...">
                         </div>
 
-                        <!-- BBC –Â‰‡ÍÚÓ -->
+                        <!-- BBC –†–µ–¥–∞–∫—Ç–æ—Ä -->
                         <div class="mb-3">
                             <label class="form-label"><?= $lang->get('description') ?></label>
 
-                            <!-- BBC ËÌÒÚÛÏÂÌÚË -->
+                            <!-- BBC –∏–Ω—Å—Ç—Ä—É–º–µ–Ω—Ç–∏ -->
                             <div class="bb-editor-toolbar mb-2 p-2 border rounded bg-light d-flex flex-wrap gap-1">
                                 <div class="btn-group btn-group-sm" role="group">
                                     <button type="button" class="btn btn-outline-secondary" onclick="insertBBCode('[b]', '[/b]')" title="<?= $lang->get('bold') ?>"><?= $lang->get('bold') ?></button>
@@ -364,10 +364,10 @@ namespace {
                                 <div class="btn-group btn-group-sm" role="group">
                                     <button type="button" class="btn btn-outline-secondary" onclick="insertBBCode('[code]', '[/code]')" title="<?= $lang->get('code') ?>"><?= $lang->get('code') ?></button>
                                     <button type="button" class="btn btn-outline-secondary" onclick="insertBBCode('[list]', '[/list]')" title="<?= $lang->get('list') ?>"><?= $lang->get('list') ?></button>
-                                    <button type="button" class="btn btn-outline-secondary" onclick="insertBBCode('[*]', '')" title="<?= $lang->get('list_item') ?>">ï</button>
+                                    <button type="button" class="btn btn-outline-secondary" onclick="insertBBCode('[*]', '')" title="<?= $lang->get('list_item') ?>">‚Ä¢</button>
                                 </div>
 
-                                <!-- œ‡‰‡˘Ë ÏÂÌ˛Ú‡ -->
+                                <!-- –ü–∞–¥–∞—â–∏ –º–µ–Ω—é—Ç–∞ -->
                                 <div class="btn-group btn-group-sm">
                                     <select class="form-select form-select-sm" onchange="applyFontFace(this.value); this.selectedIndex = 0;" title="<?= $lang->get('font') ?>">
                                         <option value=""><?= $lang->get('font') ?>...</option>
@@ -449,7 +449,7 @@ namespace {
 
 <?php require_once __DIR__ . '/templates/footer.php'; ?>
 
-<!-- JavaScript Á‡ BBC Â‰‡ÍÚÓ‡ -->
+<!-- JavaScript –∑–∞ BBC —Ä–µ–¥–∞–∫—Ç–æ—Ä–∞ -->
 <script>
 function insertBBCode(openTag, closeTag) {
     const textarea = document.getElementById('description');
