@@ -1,0 +1,14 @@
+User-agent: *
+Disallow: /admin/
+Disallow: /install/
+Disallow: /includes/
+Disallow: /cron/
+Disallow: /backups/
+Disallow: /logs/
+Disallow: /torrents/
+Disallow: /uploads/
+Disallow: /ajax/
+Disallow: /api/
+Allow: /
+
+Sitemap: /sitemap.xml
