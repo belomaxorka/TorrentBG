@@ -36,6 +36,7 @@ $page = max(1, (int)($_GET['page'] ?? 1));
 $perPage = 20;
 $offset = ($page - 1) * $perPage;
 
+// ✅ ПОПРАВЕНА ЗАЯВКА: използваме bindValue с PDO::PARAM_INT за LIMIT и OFFSET
 $stmt = $pdo->prepare("
     SELECT fp.*, u.username, u.rank
     FROM forum_posts fp
@@ -44,7 +45,10 @@ $stmt = $pdo->prepare("
     ORDER BY fp.created_at ASC
     LIMIT ? OFFSET ?
 ");
-$stmt->execute([$id, $perPage, $offset]);
+$stmt->bindValue(1, $id, PDO::PARAM_INT);
+$stmt->bindValue(2, $perPage, PDO::PARAM_INT);
+$stmt->bindValue(3, $offset, PDO::PARAM_INT);
+$stmt->execute();
 $posts = $stmt->fetchAll();
 
 // Общ брой мнения
@@ -231,16 +235,16 @@ document.addEventListener('DOMContentLoaded', function() {
                         foreach ($smileCodes as $smileCode):
                             // Проверка първо за .gif, после за .png
                             $smileFile = null;
-                            if (file_exists('/images/smiles/' . $smileCode . '.gif')) {
+                            if (file_exists(__DIR__ . '/images/smiles/' . $smileCode . '.gif')) {
                                 $smileFile = $smileCode . '.gif';
-                            } elseif (file_exists('/images/smiles/' . $smileCode . '.png')) {
+                            } elseif (file_exists(__DIR__ . '/images/smiles/' . $smileCode . '.png')) {
                                 $smileFile = $smileCode . '.png';
                             }
                             
                             if ($smileFile):
                         ?>
                             <div class="col-3 text-center">
-                                <img src="images/smiles/<?= $smileFile ?>" class="img-fluid smile-img" alt="<?= $smileCode ?>" style="cursor: pointer; max-height: 40px;">
+                                <img src="/images/smiles/<?= $smileFile ?>" class="img-fluid smile-img" alt="<?= $smileCode ?>" style="cursor: pointer; max-height: 40px;">
                             </div>
                         <?php
                             endif;

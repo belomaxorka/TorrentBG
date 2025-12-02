@@ -1,4 +1,3 @@
-/* ==== ОБЩИ СТИЛОВЕ ==== */
 body {
     background-color: #f8f9fa;
     color: #212529;
@@ -7,7 +6,7 @@ body {
 
 /* ==== НАВИГАЦИЯ — ТЪМНА ==== */
 .navbar {
-    background-color: #212529 !important; /* Тъмносиво/черно */
+    background-color: #0D6EFD !important; /* Тъмносиво/черно */
     box-shadow: 0 2px 4px rgba(0,0,0,0.2);
 }
 
@@ -155,7 +154,7 @@ body {
 /* ==== РЕЙТИНГ ==== */
 .rating-box {
     background-color: #ffc107;
-    color: #212529;
+    color: #0D6EFD;
     font-weight: bold;
     padding: 0.2rem 0.5rem;
     border-radius: 4px;
@@ -270,7 +269,7 @@ body {
 
 .admin-card-yellow .card-header {
     background-color: #ffc107;
-    color: #212529;
+    color: #0D6EFD;
 }
 
 .admin-card-red .card-header {
@@ -284,7 +283,7 @@ body {
 }
 
 .admin-card-dark .card-header {
-    background-color: #212529;
+    background-color: #0D6EFD;
     color: white;
 }
 
@@ -322,7 +321,7 @@ body {
 
 .admin-btn-yellow {
     background-color: #ffc107;
-    color: #212529;
+    color: #0D6EFD;
     border: 1px solid #ffc107;
 }
 
@@ -354,7 +353,7 @@ body {
 }
 
 .admin-btn-dark {
-    background-color: #212529;
+    background-color: #0D6EFD;
     color: white;
     border: 1px solid #212529;
 }
@@ -420,7 +419,7 @@ h2.admin-panel-title {
 .card.admin-card-yellow .card-header,
 .card.admin-panel-card-yellow .card-header {
     background-color: #ffc107;
-    color: #212529;
+    color: #0D6EFD;
 }
 
 .card.admin-card-red .card-header,
@@ -437,7 +436,7 @@ h2.admin-panel-title {
 
 .card.admin-card-dark .card-header,
 .card.admin-panel-card-dark .card-header {
-    background-color: #212529;
+    background-color: #0D6EFD;
     color: white;
 }
 
@@ -488,7 +487,7 @@ h2.admin-panel-title {
 
 /* ==== НАВИГАЦИЯ — ТЪМНА (за всички страници) ==== */
 .navbar {
-    background-color: #212529 !important; /* Тъмносиво/черно */
+    background-color: #0D6EFD !important; /* Тъмносиво/черно */
     box-shadow: 0 2px 4px rgba(0,0,0,0.2);
 }
 
@@ -555,7 +554,7 @@ h2.admin-panel-title {
 
 .admin-card-dark .card-header,
 .card.admin-card-dark .card-header {
-    background-color: #212529;
+    background-color: #0D6EFD;
     color: white;
 }
 
@@ -620,7 +619,7 @@ h2.admin-panel-title {
 }
 
 .btn-admin-dark {
-    background-color: #212529;
+    background-color: #0D6EFD;
     color: white;
     border: 1px solid #212529;
 }

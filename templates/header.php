@@ -7,17 +7,51 @@ if (!isset($_SERVER['REQUEST_TIME_FLOAT'])) {
 // Дефинираме ROOT пътя — основата на проекта
 define('ROOT_PATH', dirname(__DIR__) . DIRECTORY_SEPARATOR);
 
-// Сега използваме ROOT_PATH за да сочим към правилната директория
+// Включваме класа (без "use", защото използваме глобалния alias)
 require_once ROOT_PATH . 'includes/Database.php';
 require_once ROOT_PATH . 'includes/Auth.php';
 require_once ROOT_PATH . 'includes/StyleManager.php';
 require_once ROOT_PATH . 'includes/Language.php';
 
+// Проверка дали системата е инсталирана
+$configPath = ROOT_PATH . 'includes/config.php';
+if (!file_exists($configPath)) {
+    header('Location: /install/index.php');
+    exit;
+}
+
+$config = require $configPath;
+if (!($config['site']['installed'] ?? false)) {
+    header('Location: /install/index.php');
+    exit;
+}
+
 // Инициализираме всичко
-$pdo = Database::getInstance();
-$auth = new Auth($pdo);
-$styleManager = new StyleManager();
-$lang = new Language($_SESSION['lang'] ?? 'en');
+try {
+    // Сега getInstance() връща PDO директно
+    $pdo = Database::getInstance();
+
+    if ($pdo === null) {
+        throw new RuntimeException('Database connection failed.');
+    }
+
+    $auth = new Auth($pdo);
+    $styleManager = new StyleManager();
+    $lang = new Language($_SESSION['lang'] ?? 'en');
+
+} catch (Exception $e) {
+    header('Location: /install/index.php');
+    exit;
+}
+
+// === ДОБАВЕНА ФУНКЦИЯ: Вземи името на сайта от настройките ===
+function getSiteName($pdo) {
+    $stmt = $pdo->prepare("SELECT value FROM settings WHERE name = 'site_name'");
+    $stmt->execute();
+    return $stmt->fetchColumn() ?: 'My Tracker';
+}
+$siteName = getSiteName($pdo);
+// =============================================================
 
 // Обработка на смяна на език
 if (isset($_GET['set_lang']) && isset($_GET['lang'])) {
@@ -145,7 +179,7 @@ if ($auth->isLoggedIn()) {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><?= $lang->get('site_title') ?></title>
+    <title><?= htmlspecialchars($siteName) ?></title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     <link href="<?= $styleManager->getCSS() ?>" rel="stylesheet">
@@ -159,7 +193,7 @@ if ($auth->isLoggedIn()) {
     <nav class="navbar navbar-expand-lg navbar-light bg-light">
         <div class="container">
             <a class="navbar-brand" href="/">
-                <i class="bi bi-collection-fill me-1"></i><?= $lang->get('site_title') ?>
+                <i class="bi bi-collection-fill me-1"></i><?= htmlspecialchars($siteName) ?>
             </a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
                 <span class="navbar-toggler-icon"></span>

@@ -1,27 +1,632 @@
+/* ==== ОБЩИ СТИЛОВЕ ==== */
 body {
-    background-color: #121212;
-    color: #e0e0e0;
+    background-color: #A0A0A0;
+    color: #212529;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
+
+/* ==== НАВИГАЦИЯ — ТЪМНА ==== */
 .navbar {
-    background-color: #1e1e1e;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.5);
+    background-color: #212529 !important; /* Тъмносиво/черно */
+    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
 }
-.dropdown-menu {
-    background-color: #2a2a2a;
-    border: 1px solid #444;
-    color: #e0e0e0;
+
+.navbar-brand,
+.navbar-nav .nav-link {
+    color: #dee2e6 !important;
 }
-.dropdown-item {
-    color: #e0e0e0;
+
+.navbar-nav .nav-link:hover,
+.navbar-nav .nav-link.active {
+    color: #ffffff !important;
+    background-color: #495057;
 }
-.dropdown-item:hover {
-    background-color: #3a3a3a;
+
+/* ==== ТЪРСЕНЕ ==== */
+.search-form input[type="text"] {
+    border: 1px solid #ced4da;
+    border-radius: 4px 0 0 4px;
+    padding: 0.5rem 1rem;
+    width: 200px;
+    font-size: 0.9rem;
 }
+
+.search-form button {
+    background-color: #495057;
+    color: white;
+    border: 1px solid #495057;
+    border-left: none;
+    border-radius: 0 4px 4px 0;
+    padding: 0.5rem 1rem;
+    cursor: pointer;
+}
+
+.search-form button:hover {
+    background-color: #343a40;
+}
+
+/* ==== КАРТИ ==== */
+.card {
+    border: 1px solid #dee2e6;
+    border-radius: 8px;
+    margin-bottom: 1rem;
+    overflow: hidden;
+}
+
+.card-header {
+    background-color: #212529;
+    color: white;
+    padding: 0.75rem 1rem;
+    font-weight: bold;
+    font-size: 1.1rem;
+}
+
+/* ==== СТАТИСТИКА КАРТИ ==== */
+.stats-card {
+    background: linear-gradient(135deg, #6f42c1, #495057);
+    color: white;
+    border-radius: 8px;
+    padding: 1rem;
+    text-align: center;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    margin-bottom: 1rem;
+}
+
+.stats-card h3 {
+    font-size: 2rem;
+    margin: 0;
+    font-weight: bold;
+}
+
+.stats-card p {
+    margin: 0;
+    font-size: 0.9rem;
+    opacity: 0.9;
+}
+
+/* ==== ШОУТБОКС ==== */
+.shoutbox {
+    background-color: white;
+    border: 1px solid #dee2e6;
+    border-radius: 4px;
+    padding: 1rem;
+    max-height: 200px;
+    overflow-y: auto;
+    margin-top: 1rem;
+}
+
+.shoutbox-message {
+    margin-bottom: 1rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid #eee;
+}
+
+.shoutbox-message:last-child {
+    border-bottom: none;
+}
+
+.shoutbox-user {
+    font-weight: bold;
+    color: #0d6efd;
+}
+
+.shoutbox-time {
+    font-size: 0.8rem;
+    color: #6c757d;
+    margin-left: 0.5rem;
+}
+
+/* ==== ТАБЛИЦА С ТОРЕНТИ ==== */
+.table {
+    background-color: white;
+    border: 1px solid #dee2e6;
+    border-radius: 4px;
+    overflow: hidden;
+}
+
+.table thead th {
+    background-color: #f8f9fa;
+    border-bottom: 2px solid #dee2e6;
+    padding: 0.75rem;
+    font-weight: bold;
+    text-align: left;
+}
+
+.table tbody td {
+    padding: 0.75rem;
+    vertical-align: middle;
+}
+
+.table tbody tr:nth-child(even) {
+    background-color: #f8f9fa;
+}
+
+/* ==== ЦВЕТОВЕ ЗА СИЙДЪРИ И ЛИЙЧЪРИ ==== */
+.seeder-count {
+    color: #28a745; /* Зелено */
+    font-weight: bold;
+}
+
+.leecher-count {
+    color: #dc3545; /* Червено */
+    font-weight: bold;
+}
+
+/* ==== РЕЙТИНГ ==== */
+.rating-box {
+    background-color: #ffc107;
+    color: #212529;
+    font-weight: bold;
+    padding: 0.2rem 0.5rem;
+    border-radius: 4px;
+    font-size: 0.9rem;
+    display: inline-block;
+}
+
+.rating-votes {
+    background-color: #6c757d;
+    color: white;
+    font-size: 0.8rem;
+    padding: 0.2rem 0.5rem;
+    border-radius: 4px;
+    margin-top: 0.2rem;
+    display: block;
+}
+
+/* ==== БУТОНИ ==== */
 .btn-primary {
-    background-color: #1e88e5;
-    border-color: #1e88e5;
+    background-color: #212529;
+    border-color: #212529;
 }
+
 .btn-primary:hover {
-    background-color: #1976d2;
-    border-color: #1565c0;
+    background-color: #0b5ed7;
+    border-color: #0a58ca;
+}
+
+.btn-success {
+    background-color: #28a745;
+    border-color: #28a745;
+}
+
+.btn-success:hover {
+    background-color: #218838;
+    border-color: #1e7e34;
+}
+
+.btn-outline-danger {
+    color: #dc3545;
+    border-color: #dc3545;
+}
+
+.btn-outline-danger:hover {
+    background-color: #dc3545;
+    color: white;
+}
+
+/* ==== МОБИЛНА АДАПТАЦИЯ ==== */
+@media (max-width: 768px) {
+    .navbar-nav {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .search-form input[type="text"] {
+        width: 100%;
+        margin-bottom: 0.5rem;
+    }
+
+    .search-form button {
+        width: 100%;
+    }
+
+    .stats-card {
+        font-size: 0.9rem;
+    }
+
+    .table thead th,
+    .table tbody td {
+        padding: 0.5rem;
+        font-size: 0.85rem;
+    }
+	
+	/* ==== АДМИН ПАНЕЛ ==== */
+
+/* Заглавие на админ панел */
+.admin-panel-title {
+    background-color: #212529;
+    color: white;
+    padding: 0.75rem 1rem;
+    margin-bottom: 1rem;
+    border-radius: 4px;
+    font-weight: bold;
+    font-size: 1.3rem;
+}
+
+/* Карти в админ панел */
+.admin-card {
+    border: 1px solid #dee2e6;
+    border-radius: 8px;
+    margin-bottom: 1rem;
+    overflow: hidden;
+}
+
+.admin-card .card-header {
+    padding: 0.75rem 1rem;
+    font-weight: bold;
+    font-size: 1.1rem;
+}
+
+/* Цветни заглавия на карти */
+.admin-card-blue .card-header {
+    background-color: #212529;
+    color: white;
+}
+
+.admin-card-green .card-header {
+    background-color: #28a745;
+    color: white;
+}
+
+.admin-card-yellow .card-header {
+    background-color: #ffc107;
+    color: #212529;
+}
+
+.admin-card-red .card-header {
+    background-color: #dc3545;
+    color: white;
+}
+
+.admin-card-purple .card-header {
+    background-color: #6f42c1;
+    color: white;
+}
+
+.admin-card-dark .card-header {
+    background-color: #212529;
+    color: white;
+}
+
+/* Бутони в админ панел */
+.admin-btn {
+    border-radius: 4px;
+    padding: 0.5rem 1rem;
+    font-size: 0.9rem;
+    text-decoration: none;
+    display: inline-block;
+    margin-top: 0.5rem;
+}
+
+.admin-btn-blue {
+    background-color: #212529;
+    color: white;
+    border: 1px solid #0d6efd;
+}
+
+.admin-btn-blue:hover {
+    background-color: #0b5ed7;
+    border-color: #0a58ca;
+}
+
+.admin-btn-green {
+    background-color: #28a745;
+    color: white;
+    border: 1px solid #28a745;
+}
+
+.admin-btn-green:hover {
+    background-color: #218838;
+    border-color: #1e7e34;
+}
+
+.admin-btn-yellow {
+    background-color: #ffc107;
+    color: #212529;
+    border: 1px solid #ffc107;
+}
+
+.admin-btn-yellow:hover {
+    background-color: #e0a800;
+    border-color: #d39e00;
+}
+
+.admin-btn-red {
+    background-color: #dc3545;
+    color: white;
+    border: 1px solid #dc3545;
+}
+
+.admin-btn-red:hover {
+    background-color: #c82333;
+    border-color: #bd2130;
+}
+
+.admin-btn-purple {
+    background-color: #6f42c1;
+    color: white;
+    border: 1px solid #6f42c1;
+}
+
+.admin-btn-purple:hover {
+    background-color: #5e37a8;
+    border-color: #543196;
+}
+
+.admin-btn-dark {
+    background-color: #212529;
+    color: white;
+    border: 1px solid #212529;
+}
+
+.admin-btn-dark:hover {
+    background-color: #1a1e21;
+    border-color: #14171a;
+}
+
+/* Бързи връзки (сини бутони) */
+.quick-links .btn {
+    background-color: #212529;
+    color: white;
+    border: 1px solid #0d6efd;
+    border-radius: 4px;
+    padding: 0.5rem 1rem;
+    margin-bottom: 0.5rem;
+    display: block;
+    text-align: center;
+}
+
+.quick-links .btn:hover {
+    background-color: #0b5ed7;
+    border-color: #0a58ca;
+}
+
+/* ==== АДМИН ПАНЕЛ — без промяна на HTML ==== */
+
+/* Заглавие */
+h1.admin-panel-title,
+h2.admin-panel-title {
+    background-color: #212529;
+    color: white;
+    padding: 0.75rem 1rem;
+    margin-bottom: 1rem;
+    border-radius: 4px;
+    font-weight: bold;
+    font-size: 1.3rem;
+}
+
+/* Карти */
+.card.admin-card,
+.card.admin-panel-card {
+    border: 1px solid #dee2e6;
+    border-radius: 8px;
+    margin-bottom: 1rem;
+    overflow: hidden;
+}
+
+/* Цветни заглавия на карти */
+.card.admin-card-blue .card-header,
+.card.admin-panel-card-blue .card-header {
+    background-color: #212529;
+    color: white;
+}
+
+.card.admin-card-green .card-header,
+.card.admin-panel-card-green .card-header {
+    background-color: #28a745;
+    color: white;
+}
+
+.card.admin-card-yellow .card-header,
+.card.admin-panel-card-yellow .card-header {
+    background-color: #ffc107;
+    color: #212529;
+}
+
+.card.admin-card-red .card-header,
+.card.admin-panel-card-red .card-header {
+    background-color: #dc3545;
+    color: white;
+}
+
+.card.admin-card-purple .card-header,
+.card.admin-panel-card-purple .card-header {
+    background-color: #6f42c1;
+    color: white;
+}
+
+.card.admin-card-dark .card-header,
+.card.admin-panel-card-dark .card-header {
+    background-color: #212529;
+    color: white;
+}
+
+/* Бутони в админ панел */
+.card .btn.btn-admin-blue {
+    background-color: #212529;
+    color: white;
+    border: 1px solid #0d6efd;
+    border-radius: 4px;
+    padding: 0.5rem 1rem;
+    font-size: 0.9rem;
+    margin-top: 0.5rem;
+    display: inline-block;
+}
+
+.card .btn.btn-admin-blue:hover {
+    background-color: #0b5ed7;
+    border-color: #0a58ca;
+}
+
+.card .btn.btn-admin-green {
+    background-color: #28a745;
+    color: white;
+    border: 1px solid #28a745;
+}
+
+.card .btn.btn-admin-green:hover {
+    background-color: #218838;
+    border-color: #1e7e34;
+}
+
+/* Бързи връзки */
+.card.quick-links .btn {
+    background-color: #212529;
+    color: white;
+    border: 1px solid #0d6efd;
+    border-radius: 4px;
+    padding: 0.5rem 1rem;
+    margin-bottom: 0.5rem;
+    display: block;
+    text-align: center;
+}
+
+.card.quick-links .btn:hover {
+    background-color: #0b5ed7;
+    border-color: #0a58ca;
+}
+
+/* ==== НАВИГАЦИЯ — ТЪМНА (за всички страници) ==== */
+.navbar {
+    background-color: #212529 !important; /* Тъмносиво/черно */
+    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+}
+
+.navbar-brand,
+.navbar-nav .nav-link {
+    color: #dee2e6 !important;
+}
+
+.navbar-nav .nav-link:hover,
+.navbar-nav .nav-link.active {
+    color: #ffffff !important;
+    background-color: #495057;
+}
+
+/* ==== АДМИН ЗАГЛАВИЕ ==== */
+.admin-panel-title {
+    background-color: #212529;
+    color: white;
+    padding: 0.75rem 1rem;
+    margin-bottom: 1rem;
+    border-radius: 4px;
+    font-weight: bold;
+    font-size: 1.3rem;
+}
+
+/* ==== АДМИН КАРТИ ==== */
+.admin-card {
+    border: 1px solid #dee2e6;
+    border-radius: 8px;
+    margin-bottom: 1rem;
+    overflow: hidden;
+}
+
+/* Цветни заглавия на карти */
+.admin-card-blue .card-header,
+.card.admin-card-blue .card-header {
+    background-color: #212529;
+    color: white;
+}
+
+.admin-card-green .card-header,
+.card.admin-card-green .card-header {
+    background-color: #28a745;
+    color: white;
+}
+
+.admin-card-yellow .card-header,
+.card.admin-card-yellow .card-header {
+    background-color: #ffc107;
+    color: #212529;
+}
+
+.admin-card-red .card-header,
+.card.admin-card-red .card-header {
+    background-color: #dc3545;
+    color: white;
+}
+
+.admin-card-purple .card-header,
+.card.admin-card-purple .card-header {
+    background-color: #6f42c1;
+    color: white;
+}
+
+.admin-card-dark .card-header,
+.card.admin-card-dark .card-header {
+    background-color: #212529;
+    color: white;
+}
+
+/* ==== БУТОНИ В АДМИН ПАНЕЛ ==== */
+.btn-admin-blue {
+    background-color: #212529;
+    color: white;
+    border: 1px solid #0d6efd;
+    border-radius: 4px;
+    padding: 0.5rem 1rem;
+    font-size: 0.9rem;
+    display: inline-block;
+}
+
+.btn-admin-blue:hover {
+    background-color: #0b5ed7;
+    border-color: #0a58ca;
+}
+
+.btn-admin-green {
+    background-color: #28a745;
+    color: white;
+    border: 1px solid #28a745;
+}
+
+.btn-admin-green:hover {
+    background-color: #218838;
+    border-color: #1e7e34;
+}
+
+.btn-admin-yellow {
+    background-color: #ffc107;
+    color: #212529;
+    border: 1px solid #ffc107;
+}
+
+.btn-admin-yellow:hover {
+    background-color: #e0a800;
+    border-color: #d39e00;
+}
+
+.btn-admin-red {
+    background-color: #dc3545;
+    color: white;
+    border: 1px solid #dc3545;
+}
+
+.btn-admin-red:hover {
+    background-color: #c82333;
+    border-color: #bd2130;
+}
+
+.btn-admin-purple {
+    background-color: #6f42c1;
+    color: white;
+    border: 1px solid #6f42c1;
+}
+
+.btn-admin-purple:hover {
+    background-color: #5e37a8;
+    border-color: #543196;
+}
+
+.btn-admin-dark {
+    background-color: #212529;
+    color: white;
+    border: 1px solid #212529;
+}
+
+.btn-admin-dark:hover {
+    background-color: #1a1e21;
+    border-color: #14171a;
+}
 }

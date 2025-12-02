@@ -37,7 +37,14 @@ require_once __DIR__ . '/templates/header.php';
 ?>
 
 <div class="d-flex justify-content-between align-items-center mb-4">
-    <h2><?= htmlspecialchars($forum['name']) ?></h2>
+    <h2>
+        <?php if (!empty($forum['icon'])): ?>
+            <img src="/images/forums/<?= htmlspecialchars($forum['icon']) ?>" 
+                 alt="<?= htmlspecialchars($forum['name']) ?>" 
+                 style="width: 28px; height: 28px; vertical-align: middle; margin-right: 10px; border-radius: 4px;">
+        <?php endif; ?>
+        <?= htmlspecialchars($forum['name']) ?>
+    </h2>
     <?php if ($auth->isLoggedIn()): ?>
         <a href="/forum_topic_create.php?forum_id=<?= $forum['id'] ?>" class="btn btn-primary"><?= $lang->get('create_new_topic') ?></a>
     <?php endif; ?>

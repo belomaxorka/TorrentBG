@@ -28,28 +28,51 @@ if (!$torrent) {
     die($lang->get('torrent_not_found'));
 }
 
-// IMDb/Youtube информация
-$imdbInfo = [];
-$youtubeEmbed = '';
-if ($torrent['imdb_link']) {
-    // Тук ще добавим реално извличане от IMDb API в бъдеще
-    $imdbInfo = [
-        'title' => 'Movie Title (from IMDb)',
-        'year' => '2023',
-        'rating' => '8.5/10',
-        'genre' => 'Action, Drama',
-        'description' => 'This is a movie description from IMDb.'
-    ];
+// === IMDb информация — с реален API ключ от базата ===
+$imdbInfo = null;
+$imdbId = null;
+if (!empty($torrent['imdb_link'])) {
+    // Извличаме IMDb ID (tt1234567)
+    if (preg_match('/(tt\d+)/', $torrent['imdb_link'], $matches)) {
+        $imdbId = $matches[1];
+        
+        // Вземи API ключа от базата
+        $stmt = $pdo->prepare("SELECT value FROM settings WHERE name = 'omdb_api_key'");
+        $stmt->execute();
+        $omdbApiKey = $stmt->fetchColumn();
+
+        if (!empty($omdbApiKey)) {
+            $url = "https://www.omdbapi.com/?i={$imdbId}&apikey=" . urlencode($omdbApiKey) . "&plot=full";
+            $response = @file_get_contents($url);
+            
+            if ($response) {
+                $data = json_decode($response, true);
+                if ($data && ($data['Response'] ?? '') === 'True') {
+                    $imdbInfo = [
+                        'title' => $data['Title'] ?? 'N/A',
+                        'year' => $data['Year'] ?? 'N/A',
+                        'rating' => ($data['imdbRating'] ?? 'N/A') . '/10',
+                        'genre' => $data['Genre'] ?? 'N/A',
+                        'description' => $data['Plot'] ?? $lang->get('no_description'),
+                        'poster' => $data['Poster'] ?? null,
+                        'director' => $data['Director'] ?? 'N/A',
+                        'actors' => $data['Actors'] ?? 'N/A',
+                    ];
+                }
+            }
+        }
+    }
 }
 
+// === YouTube ===
+$youtubeEmbed = '';
 if ($torrent['youtube_link']) {
-    // Извличаме video ID
     if (preg_match('/(?:youtube\.com\/watch\?v=|youtu\.be\/)([a-zA-Z0-9_-]+)/', $torrent['youtube_link'], $matches)) {
         $youtubeEmbed = '<iframe width="560" height="315" src="https://www.youtube.com/embed/' . $matches[1] . '" frameborder="0" allowfullscreen></iframe>';
     }
 }
 
-// Потребителски рейтинг
+// === Рейтинг ===
 $userRating = 0;
 if ($auth->isLoggedIn()) {
     $stmt = $pdo->prepare("SELECT rating FROM torrent_ratings WHERE torrent_id = ? AND user_id = ?");
@@ -58,7 +81,7 @@ if ($auth->isLoggedIn()) {
     $userRating = $rating ? $rating['rating'] : 0;
 }
 
-// Коментари
+// === Коментари ===
 $stmt = $pdo->prepare("
     SELECT tc.*, u.username, u.rank
     FROM torrent_comments tc
@@ -87,12 +110,23 @@ require_once __DIR__ . '/templates/header.php';
 
                 <?php if ($imdbInfo): ?>
                     <div class="card mb-4">
-                        <div class="card-header"><?= $lang->get('movie_info') ?></div>
+                        <div class="card-header"><?= $lang->get('movie_info') ?> (IMDb)</div>
                         <div class="card-body">
-                            <h5><?= $imdbInfo['title'] ?> (<?= $imdbInfo['year'] ?>)</h5>
-                            <p><strong><?= $lang->get('rating') ?>:</strong> <?= $imdbInfo['rating'] ?></p>
-                            <p><strong><?= $lang->get('genre') ?>:</strong> <?= $imdbInfo['genre'] ?></p>
-                            <p><?= $imdbInfo['description'] ?></p>
+                            <?php if (!empty($imdbInfo['poster']) && $imdbInfo['poster'] !== 'N/A'): ?>
+                                <div class="text-center mb-3">
+                                    <img src="<?= htmlspecialchars($imdbInfo['poster']) ?>" class="img-fluid rounded" style="max-height: 300px; object-fit: cover;">
+                                </div>
+                            <?php endif; ?>
+
+                            <h5><?= htmlspecialchars($imdbInfo['title']) ?> (<?= htmlspecialchars($imdbInfo['year']) ?>)</h5>
+                            <p><strong><?= $lang->get('imdb_rating') ?>:</strong> <?= htmlspecialchars($imdbInfo['rating']) ?></p>
+                            <p><strong><?= $lang->get('imdb_genre') ?>:</strong> <?= htmlspecialchars($imdbInfo['genre']) ?></p>
+                            <p><strong><?= $lang->get('imdb_director') ?>:</strong> <?= htmlspecialchars($imdbInfo['director']) ?></p>
+                            <p><strong><?= $lang->get('imdb_actors') ?>:</strong> <?= htmlspecialchars($imdbInfo['actors']) ?></p>
+                            <p><?= nl2br(htmlspecialchars($imdbInfo['description'])) ?></p>
+                            <a href="https://www.imdb.com/title/<?= $imdbId ?>/" target="_blank" class="btn btn-sm btn-warning">
+                                <i class="bi bi-film"></i> <?= $lang->get('view_on_imdb') ?>
+                            </a>
                         </div>
                     </div>
                 <?php endif; ?>
@@ -212,7 +246,6 @@ require_once __DIR__ . '/templates/header.php';
     </div>
 
     <div class="col-md-4">
-        <!-- Тук ще добавим sidebar блокове в бъдеще -->
         <div class="card mb-4">
             <div class="card-header"><?= $lang->get('statistics') ?></div>
             <div class="card-body">

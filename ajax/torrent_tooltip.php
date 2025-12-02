@@ -36,13 +36,18 @@ function formatBytes($bytes, $precision = 2) {
 }
 ?>
 
+<!-- 💡 Картинката с фиксиран максимален размер -->
 <?php if (!empty($torrent['poster'])): ?>
-    <img src="/<?= htmlspecialchars($torrent['poster']) ?>" alt="<?= htmlspecialchars($lang->get('poster')) ?>">
+    <img src="/<?= htmlspecialchars($torrent['poster']) ?>" 
+         alt="<?= htmlspecialchars($lang->get('poster') ?: 'Постер') ?>"
+         style="width: 100%; height: auto; max-height: 250px; object-fit: cover; border-radius: 4px;">
 <?php else: ?>
-    <div class="placeholder"><?= htmlspecialchars($lang->get('tooltip_no_poster') ?: 'Няма постер') ?></div>
+    <div class="placeholder" style="width: 100%; height: 150px; display: flex; align-items: center; justify-content: center; background: #444; border-radius: 4px; color: #aaa; font-size: 13px;">
+        <?= htmlspecialchars($lang->get('tooltip_no_poster') ?: 'Няма постер') ?>
+    </div>
 <?php endif; ?>
 
-<div class="stats">
+<div class="stats" style="margin-top: 8px; font-size: 13px; line-height: 1.5;">
     <div class="seeds">🌱 <?= htmlspecialchars($lang->get('tooltip_seeds') ?: 'Сийдъри') ?>: <?= number_format($torrent['seeders'], 0, '', ' ') ?></div>
     <div class="leechers">🐌 <?= htmlspecialchars($lang->get('tooltip_leechers') ?: 'Лийчъри') ?>: <?= number_format($torrent['leechers'], 0, '', ' ') ?></div>
     <div class="size">💾 <?= htmlspecialchars($lang->get('tooltip_size') ?: 'Размер') ?>: <?= formatBytes($torrent['size']) ?></div>

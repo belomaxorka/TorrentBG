@@ -26,11 +26,11 @@ if ($_POST['action'] ?? false) {
                 $pdo->prepare("DELETE FROM peers WHERE torrent_id = ? AND last_announce < NOW() - INTERVAL 30 MINUTE")->execute([$torrent['id']]);
                 
                 // Преброяваме активните сидъри и лийчъри
-                $seeders = $pdo->prepare("SELECT COUNT(*) FROM peers WHERE torrent_id = ? AND is_seeder = 1 AND last_announce >= NOW() - INTERVAL 30 MINUTE");
+                $seeders = $pdo->prepare("SELECT COUNT(*) FROM peers WHERE torrent_id = ? AND seeder = 1 AND last_announce >= NOW() - INTERVAL 30 MINUTE");
                 $seeders->execute([$torrent['id']]);
                 $seederCount = $seeders->fetchColumn();
 
-                $leechers = $pdo->prepare("SELECT COUNT(*) FROM peers WHERE torrent_id = ? AND is_seeder = 0 AND last_announce >= NOW() - INTERVAL 30 MINUTE");
+                $leechers = $pdo->prepare("SELECT COUNT(*) FROM peers WHERE torrent_id = ? AND seeder = 0 AND last_announce >= NOW() - INTERVAL 30 MINUTE");
                 $leechers->execute([$torrent['id']]);
                 $leecherCount = $leechers->fetchColumn();
                 
@@ -53,8 +53,8 @@ if ($_POST['action'] ?? false) {
 
 // Статистики
 $totalTorrents = $pdo->query("SELECT COUNT(*) FROM torrents")->fetchColumn();
-$activeSeeders = $pdo->query("SELECT COUNT(*) FROM peers WHERE is_seeder = 1 AND last_announce >= NOW() - INTERVAL 30 MINUTE")->fetchColumn();
-$activeLeechers = $pdo->query("SELECT COUNT(*) FROM peers WHERE is_seeder = 0 AND last_announce >= NOW() - INTERVAL 30 MINUTE")->fetchColumn();
+$activeSeeders = $pdo->query("SELECT COUNT(*) FROM peers WHERE seeder = 1 AND last_announce >= NOW() - INTERVAL 30 MINUTE")->fetchColumn();
+$activeLeechers = $pdo->query("SELECT COUNT(*) FROM peers WHERE seeder = 0 AND last_announce >= NOW() - INTERVAL 30 MINUTE")->fetchColumn();
 $totalPeers = $activeSeeders + $activeLeechers;
 
 require_once __DIR__ . '/../templates/header.php';
@@ -205,7 +205,7 @@ require_once __DIR__ . '/../templates/header.php';
                                         <td><?= htmlspecialchars($peer['ip']) ?></td>
                                         <td><?= $peer['port'] ?></td>
                                         <td>
-                                            <?php if ($peer['is_seeder']): ?>
+                                            <?php if ($peer['seeder']): ?>
                                                 <span class="badge bg-success"><?= $lang->get('seeder') ?></span>
                                             <?php else: ?>
                                                 <span class="badge bg-warning"><?= $lang->get('leecher') ?></span>

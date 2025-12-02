@@ -12,8 +12,8 @@ $stmt = $pdo->prepare("
 $stmt->execute();
 $poll = $stmt->fetch();
 
+// Ако няма активна анкета — НЕ ИЗВЕЖДАМЕ НИЩО (блокът остава празен)
 if (!$poll) {
-    echo '<div class="alert alert-info">' . $lang->get('no_active_poll') . '</div>';
     return;
 }
 

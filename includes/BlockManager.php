@@ -16,7 +16,7 @@ class BlockManager {
             WHERE is_active = 1 
             ORDER BY position, `order`
         ");
-        $this->blocks = $stmt->fetchAll(PDO::FETCH_ASSOC); // Ясно извличане като асоциативен масив
+        $this->blocks = $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
     public function getBlocksByPosition(string $position): array {
@@ -26,10 +26,11 @@ class BlockManager {
     public function renderBlock(string $name, PDO $pdo, Auth $auth, Language $lang): void {
         $filePath = __DIR__ . "/../blocks/{$name}.php";
         if (file_exists($filePath)) {
-            // Дефинираме IN_BLOCK само ако не е вече дефиниран
             if (!defined('IN_BLOCK')) {
                 define('IN_BLOCK', true);
             }
+            // Предаваме променливите в обхвата на блока
+            extract(compact('pdo', 'auth', 'lang'), EXTR_REFS);
             require $filePath;
         }
     }

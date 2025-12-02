@@ -63,15 +63,18 @@ $page = max(1, (int)($_GET['page'] ?? 1));
 $perPage = 20;
 $offset = ($page - 1) * $perPage;
 
+// ✅ ПОПРАВЕНА ЗАЯВКА: използваме bindValue с PDO::PARAM_INT
 $stmt = $pdo->prepare("
     SELECT t.*, c.name as category_name, u.username as uploader_name
     FROM torrents t
     JOIN categories c ON t.category_id = c.id
     JOIN users u ON t.uploader_id = u.id
     ORDER BY t.uploaded_at DESC
-    LIMIT ? OFFSET ?
+    LIMIT :limit OFFSET :offset
 ");
-$stmt->execute([$perPage, $offset]);
+$stmt->bindValue(':limit', $perPage, PDO::PARAM_INT);
+$stmt->bindValue(':offset', $offset, PDO::PARAM_INT);
+$stmt->execute();
 $torrents = $stmt->fetchAll();
 
 // Общ брой

@@ -142,6 +142,8 @@ require_once __DIR__ . '/../templates/header.php';
                         <a href="/admin/polls.php" class="btn btn-dark"><?= $lang->get('manage_polls') ?></a>
                         <a href="/admin/translations.php" class="btn btn-purple"><?= $lang->get('manage_translations') ?></a>
                         <a href="/admin/scrape.php" class="btn btn-primary"><?= $lang->get('tracker_statistics') ?></a>
+                        <!-- ✅ Добавен линк към настройките -->
+                        <a href="/admin/settings.php" class="btn btn-outline-purple"><?= $lang->get('system_settings') ?></a>
                     </div>
                 </div>
             </div>
@@ -240,14 +242,15 @@ require_once __DIR__ . '/../templates/header.php';
             </div>
         </div>
 
+        <!-- ✅ Направен работещ линк към настройките -->
         <div class="col-md-6 mb-4">
             <div class="card admin-card h-100">
                 <div class="card-header bg-purple text-white">
                     <h5 class="mb-0">⚙️ <?= $lang->get('system_settings') ?></h5>
                 </div>
                 <div class="card-body">
-                    <p class="card-text"><?= $lang->get('coming_soon') ?></p>
-                    <button class="btn btn-purple" disabled><?= $lang->get('settings') ?></button>
+                    <p class="card-text"><?= $lang->get('configure_api_keys_and_site_options') ?></p>
+                    <a href="/admin/settings.php" class="btn btn-purple"><?= $lang->get('settings') ?></a>
                 </div>
             </div>
         </div>
