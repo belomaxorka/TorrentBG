@@ -26,189 +26,12 @@ if (!in_array($lang, $supportedLangs)) {
     $lang = 'en';
 }
 
-// Езикови низове
-$translations = [
-    'en' => [
-        'title' => 'TorrentBG Installation',
-        'success' => '✅ Installation successful! Admin user: <strong>%s</strong><br><br><a href="/" class="btn btn-primary">👉 Go to site</a>',
-        'db_config' => '⚙️ MySQL Configuration',
-        'host' => 'Host (e.g. localhost)',
-        'username' => 'Username',
-        'password' => 'Password',
-        'db_name' => 'Database Name',
-        'admin_config' => '👑 Administrator',
-        'admin_user' => 'Username',
-        'admin_pass' => 'Password',
-        'admin_email' => 'Email',
-        'install_button' => '🚀 Install',
-        'select_language' => 'Select Language',
-        'errors' => [
-            'db_fields' => 'Please fill all database fields.',
-            'admin_fields' => 'Please fill all administrator fields.',
-            'installation_error' => 'Installation error: %s',
-            'sql_missing' => 'Missing SQL file: /sql/database.sql — please create it first.',
-        ],
-        'tracker_settings' => '⚙️ Tracker Settings',
-        'tracker_name' => 'Tracker Name',
-        'tracker_url' => 'Tracker URL',
-        'announce_url' => 'Announce URL',
-        'tracker_mode' => 'Tracker Mode',
-        'private_mode' => 'Private (requires passkey)',
-        'open_mode' => 'Open (accepts everyone)',
-        'tracker_email' => 'Tracker Email',
-        'omdb_api_key' => 'OMDb API Key',
-        'get_key_from' => 'Get free key from OMDb API. Without key, IMDb data will not be displayed.',
-        'save_settings' => 'Save Settings',
-        'next_step' => 'Next Step →',
-        'step1_title' => 'Step 1: Tracker Settings',
-        'step2_title' => 'Step 2: Database & Admin Setup',
-        'security_warning' => '❗️ <strong>For your security, please DELETE or RENAME the <code>/install/</code> folder immediately!</strong><br>Leaving it may allow attackers to reinstall or compromise your site.',
-    ],
-    'bg' => [
-        'title' => 'Инсталация на TorrentBG',
-        'success' => '✅ Инсталацията завърши успешно! Администратор: <strong>%s</strong><br><br><a href="/" class="btn btn-primary">👉 Към сайта</a>',
-        'db_config' => '⚙️ MySQL Конфигурация',
-        'host' => 'Хост (напр. localhost)',
-        'username' => 'Потребител',
-        'password' => 'Парола',
-        'db_name' => 'Име на базата данни',
-        'admin_config' => '👑 Администратор',
-        'admin_user' => 'Потребителско име',
-        'admin_pass' => 'Парола',
-        'admin_email' => 'Имейл',
-        'install_button' => '🚀 Инсталирай',
-        'select_language' => 'Избери Език',
-        'errors' => [
-            'db_fields' => 'Моля, попълнете всички полета за базата данни.',
-            'admin_fields' => 'Моля, попълнете администраторските данни.',
-            'installation_error' => 'Грешка при инсталация: %s',
-            'sql_missing' => 'Липсва SQL файл: /sql/database.sql — моля, създайте го предварително.',
-        ],
-        'tracker_settings' => '⚙️ Настройки на тракера',
-        'tracker_name' => 'Име на тракера',
-        'tracker_url' => 'URL на тракера',
-        'announce_url' => 'Анонс URL',
-        'tracker_mode' => 'Режим на тракера',
-        'private_mode' => 'Частен (изисква passkey)',
-        'open_mode' => 'Отворен (приема всички)',
-        'tracker_email' => 'Имейл на тракера',
-        'omdb_api_key' => 'OMDb API ключ',
-        'get_key_from' => 'Получете безплатен ключ от OMDb API. Без ключ, IMDb данните няма да се показват.',
-        'save_settings' => 'Запази настройките',
-        'next_step' => 'Следващият стъп →',
-        'step1_title' => 'Стъпка 1: Настройки на тракера',
-        'step2_title' => 'Стъпка 2: База данни и администратор',
-        'security_warning' => '❗️ <strong>За ваша сигурност, МОЛЯ ИЗТРИЙТЕ или ПРЕИМЕНУВАЙТЕ папка <code>/install/</code> веднага!</strong><br>Ако я оставите, злонамерени лица могат да преинсталират или компрометират сайта ви.',
-    ],
-    'fr' => [
-        'title' => 'Installation du TorrentBG',
-        'success' => '✅ Installation réussie ! Utilisateur admin : <strong>%s</strong><br><br><a href="/" class="btn btn-primary">👉 Aller au site</a>',
-        'db_config' => '⚙️ Configuration MySQL',
-        'host' => 'Hôte (ex: localhost)',
-        'username' => 'Nom d\'utilisateur',
-        'password' => 'Mot de passe',
-        'db_name' => 'Nom de la base de données',
-        'admin_config' => '👑 Administrateur',
-        'admin_user' => 'Nom d\'utilisateur',
-        'admin_pass' => 'Mot de passe',
-        'admin_email' => 'Email',
-        'install_button' => '🚀 Installer',
-        'select_language' => 'Sélectionner la langue',
-        'errors' => [
-            'db_fields' => 'Veuillez remplir tous les champs de la base de données.',
-            'admin_fields' => 'Veuillez remplir les informations de l\'administrateur.',
-            'installation_error' => 'Erreur d\'installation : %s',
-            'sql_missing' => 'Fichier SQL manquant : /sql/database.sql — veuillez le créer d\'abord.',
-        ],
-        'tracker_settings' => '⚙️ Paramètres du tracker',
-        'tracker_name' => 'Nom du tracker',
-        'tracker_url' => 'URL du tracker',
-        'announce_url' => 'URL d\'annonce',
-        'tracker_mode' => 'Mode du tracker',
-        'private_mode' => 'Privé (nécessite une clé)',
-        'open_mode' => 'Ouvert (accepte tout le monde)',
-        'tracker_email' => 'Email du tracker',
-        'omdb_api_key' => 'Clé API OMDb',
-        'get_key_from' => 'Obtenez une clé gratuite sur OMDb API. Sans clé, les données IMDb ne seront pas affichées.',
-        'save_settings' => 'Enregistrer les paramètres',
-        'next_step' => 'Étape suivante →',
-        'step1_title' => 'Étape 1 : Paramètres du tracker',
-        'step2_title' => 'Étape 2 : Base de données et administrateur',
-        'security_warning' => '❗️ <strong>Pour votre sécurité, veuillez SUPPRIMER ou RENOMMER le dossier <code>/install/</code> immédiatement !</strong><br>Le laisser pourrait permettre à des attaquants de réinstaller ou de compromettre votre site.',
-    ],
-    'de' => [
-        'title' => 'TorrentBG Installation',
-        'success' => '✅ Installation erfolgreich! Admin-Benutzer: <strong>%s</strong><br><br><a href="/" class="btn btn-primary">👉 Zur Website</a>',
-        'db_config' => '⚙️ MySQL Konfiguration',
-        'host' => 'Host (z.B. localhost)',
-        'username' => 'Benutzername',
-        'password' => 'Passwort',
-        'db_name' => 'Datenbankname',
-        'admin_config' => '👑 Administrator',
-        'admin_user' => 'Benutzername',
-        'admin_pass' => 'Passwort',
-        'admin_email' => 'E-Mail',
-        'install_button' => '🚀 Installieren',
-        'select_language' => 'Sprache auswählen',
-        'errors' => [
-            'db_fields' => 'Bitte füllen Sie alle Datenbankfelder aus.',
-            'admin_fields' => 'Bitte füllen Sie alle Administratorfelder aus.',
-            'installation_error' => 'Installationsfehler: %s',
-            'sql_missing' => 'SQL-Datei fehlt: /sql/database.sql — bitte erstellen Sie sie zuerst.',
-        ],
-        'tracker_settings' => '⚙️ Tracker-Einstellungen',
-        'tracker_name' => 'Name des Trackers',
-        'tracker_url' => 'URL des Trackers',
-        'announce_url' => 'Ankündigungs-URL',
-        'tracker_mode' => 'Tracker-Modus',
-        'private_mode' => 'Privat (benötigt Passkey)',
-        'open_mode' => 'Öffentlich (akzeptiert alle)',
-        'tracker_email' => 'E-Mail des Trackers',
-        'omdb_api_key' => 'OMDb API-Schlüssel',
-        'get_key_from' => 'Hol dir einen kostenlosen Schlüssel von OMDb API. Ohne Schlüssel werden keine IMDb-Daten angezeigt.',
-        'save_settings' => 'Einstellungen speichern',
-        'next_step' => 'Nächster Schritt →',
-        'step1_title' => 'Schritt 1: Tracker-Einstellungen',
-        'step2_title' => 'Schritt 2: Datenbank und Administrator',
-        'security_warning' => '❗️ <strong>Löschen oder benennen Sie aus Sicherheitsgründen bitte SOFORT den Ordner <code>/install/</code> um!</strong><br>Wenn Sie ihn belassen, könnten Angreifer Ihre Seite neu installieren oder kompromittieren.',
-    ],
-    'ru' => [
-        'title' => 'Установка TorrentBG',
-        'success' => '✅ Установка успешна! Администратор: <strong>%s</strong><br><br><a href="/" class="btn btn-primary">👉 Перейти на сайт</a>',
-        'db_config' => '⚙️ Конфигурация MySQL',
-        'host' => 'Хост (например localhost)',
-        'username' => 'Имя пользователя',
-        'password' => 'Пароль',
-        'db_name' => 'Имя базы данных',
-        'admin_config' => '👑 Администратор',
-        'admin_user' => 'Имя пользователя',
-        'admin_pass' => 'Пароль',
-        'admin_email' => 'Email',
-        'install_button' => '🚀 Установить',
-        'select_language' => 'Выберите язык',
-        'errors' => [
-            'db_fields' => 'Пожалуйста, заполните все поля базы данных.',
-            'admin_fields' => 'Пожалуйста, заполните данные администратора.',
-            'installation_error' => 'Ошибка установки: %s',
-            'sql_missing' => 'Отсутствует SQL-файл: /sql/database.sql — пожалуйста, создайте его заранее.',
-        ],
-        'tracker_settings' => '⚙️ Настройки трекера',
-        'tracker_name' => 'Имя трекера',
-        'tracker_url' => 'URL трекера',
-        'announce_url' => 'Анонс URL',
-        'tracker_mode' => 'Режим трекера',
-        'private_mode' => 'Частный (требует passkey)',
-        'open_mode' => 'Открытый (принимает всех)',
-        'tracker_email' => 'Email трекера',
-        'omdb_api_key' => 'Ключ OMDb API',
-        'get_key_from' => 'Получите бесплатный ключ от OMDb API. Без ключа IMDb данные не будут показаны.',
-        'save_settings' => 'Сохранить настройки',
-        'next_step' => 'Следующий шаг →',
-        'step1_title' => 'Шаг 1: Настройки трекера',
-        'step2_title' => 'Шаг 2: База данных и администратор',
-        'security_warning' => '❗️ <strong>В целях безопасности НЕМЕДЛЕННО УДАЛИТЕ или ПЕРЕИМЕНУЙТЕ папку <code>/install/</code>!</strong><br>Если оставить её, злоумышленники смогут переустановить или скомпрометировать ваш сайт.',
-    ]
-];
+// Зареждане на езиковия файл
+$langFile = __DIR__ . "/lang/{$lang}.php";
+if (!file_exists($langFile)) {
+    $langFile = __DIR__ . '/lang/en.php';
+}
+$translations = [$lang => require $langFile];
 
 $errors = [];
 $success = false;
@@ -253,19 +76,35 @@ if ($currentStep === '2' && ($_POST['install'] ?? false)) {
     $admin_pass = $_POST['admin_pass'] ?? '';
     $admin_email = $_POST['admin_email'] ?? '';
 
+    // Сохраняем данные в сессии для восстановления при ошибке
+    $_SESSION['install_step2'] = [
+        'db_host' => $host,
+        'db_user' => $user,
+        'db_name' => $name,
+        'admin_user' => $admin_user,
+        'admin_email' => $admin_email,
+    ];
+
     if (empty($host) || empty($user) || empty($name)) {
         $errors[] = $translations[$lang]['errors']['db_fields'];
     }
     if (empty($admin_user) || empty($admin_pass) || empty($admin_email)) {
         $errors[] = $translations[$lang]['errors']['admin_fields'];
     }
+    if (!filter_var($admin_email, FILTER_VALIDATE_EMAIL)) {
+        $errors[] = 'Invalid email format.';
+    }
 
     if (empty($errors)) {
         try {
-            $pdo = new PDO("mysql:host=$host;dbname=$name;charset=utf8mb4", $user, $pass, [
+            // Проверка подключения к БД
+            $pdo = new PDO("mysql:host=$host;charset=utf8mb4", $user, $pass, [
                 PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
                 PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
             ]);
+            
+            // Проверка существования БД
+            $pdo->exec("USE `$name`");
 
             // Проверка за SQL файл в root/sql/database.sql
             $sqlFile = __DIR__ . '/../sql/database.sql';
@@ -289,10 +128,15 @@ if ($currentStep === '2' && ($_POST['install'] ?? false)) {
 
                 // === ЗАПИС НА НАСТРОЙКИТЕ В ТАБЛИЦА `settings` ===
                 $step1Data = $_SESSION['install_step1'] ?? [];
+                
+                // Валидация URL
+                $trackerUrl = filter_var($step1Data['tracker_url'] ?? '', FILTER_VALIDATE_URL) ?: '';
+                $announceUrl = filter_var($step1Data['announce_url'] ?? '', FILTER_VALIDATE_URL) ?: '';
+                
                 $settingsToSave = [
                     'site_name'         => $step1Data['tracker_name'] ?? 'TorrentBG',
-                    'site_url'          => $step1Data['tracker_url'] ?? '',
-                    'tracker_announce'  => $step1Data['announce_url'] ?? '',
+                    'site_url'          => $trackerUrl,
+                    'tracker_announce'  => $announceUrl,
                     'tracker_mode'      => $step1Data['tracker_mode'] ?? 'open',
                     'site_email'        => $step1Data['tracker_email'] ?? '',
                     'omdb_api_key'      => $step1Data['omdb_api_key'] ?? '',
@@ -330,10 +174,16 @@ if ($currentStep === '2' && ($_POST['install'] ?? false)) {
                     "declare(strict_types=1);\n\n" .
                     "return " . var_export($newConfig, true) . ";\n";
 
+                if (!is_writable(dirname($configPath))) {
+                    throw new Exception("Directory " . dirname($configPath) . " is not writable");
+                }
+                
                 if (!file_put_contents($configPath, $configContent)) {
                     throw new Exception("Failed to update config.php");
                 }
 
+                // Очистка сессии после успешной установки
+                unset($_SESSION['install_step1'], $_SESSION['install_step2']);
                 $success = true;
             }
 
@@ -454,27 +304,28 @@ if ($currentStep === '2' && ($_POST['install'] ?? false)) {
                     <input type="hidden" name="step" value="2">
 
                     <h3><?= $translations[$lang]['db_config'] ?></h3>
+                    <?php $step2Data = $_SESSION['install_step2'] ?? []; ?>
                     <label><?= $translations[$lang]['host'] ?></label>
-                    <input type="text" name="db_host" value="<?= htmlspecialchars($_POST['db_host'] ?? 'localhost') ?>" required>
+                    <input type="text" name="db_host" value="<?= htmlspecialchars($step2Data['db_host'] ?? 'localhost') ?>" required>
 
                     <label><?= $translations[$lang]['username'] ?></label>
-                    <input type="text" name="db_user" value="<?= htmlspecialchars($_POST['db_user'] ?? '') ?>" required>
+                    <input type="text" name="db_user" value="<?= htmlspecialchars($step2Data['db_user'] ?? '') ?>" required>
 
                     <label><?= $translations[$lang]['password'] ?></label>
-                    <input type="password" name="db_pass" value="<?= htmlspecialchars($_POST['db_pass'] ?? '') ?>">
+                    <input type="password" name="db_pass" value="">
 
                     <label><?= $translations[$lang]['db_name'] ?></label>
-                    <input type="text" name="db_name" value="<?= htmlspecialchars($_POST['db_name'] ?? '') ?>" required>
+                    <input type="text" name="db_name" value="<?= htmlspecialchars($step2Data['db_name'] ?? '') ?>" required>
 
                     <h3><?= $translations[$lang]['admin_config'] ?></h3>
                     <label><?= $translations[$lang]['admin_user'] ?></label>
-                    <input type="text" name="admin_user" value="<?= htmlspecialchars($_POST['admin_user'] ?? '') ?>" required>
+                    <input type="text" name="admin_user" value="<?= htmlspecialchars($step2Data['admin_user'] ?? '') ?>" required>
 
                     <label><?= $translations[$lang]['admin_pass'] ?></label>
                     <input type="password" name="admin_pass" required>
 
                     <label><?= $translations[$lang]['admin_email'] ?></label>
-                    <input type="email" name="admin_email" value="<?= htmlspecialchars($_POST['admin_email'] ?? '') ?>" required>
+                    <input type="email" name="admin_email" value="<?= htmlspecialchars($step2Data['admin_email'] ?? '') ?>" required>
 
                     <input type="hidden" name="install" value="1">
                     <br>
