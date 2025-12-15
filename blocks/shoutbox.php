@@ -29,7 +29,7 @@ if (!isset($shoutboxTableCreated)) {
     }
 }
 
-// ✅ Генерираме уникален timestamp
+// ✅ Generate unique timestamp
 $timestamp = time();
 ?>
 
@@ -104,7 +104,7 @@ $timestamp = time();
     <?php endif; ?>
 </div>
 
-<!-- Модален прозорец за усмивки -->
+<!-- Modal window for smiles -->
 <div class="modal fade" id="smilesModal" tabindex="-1">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
@@ -144,7 +144,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const form = document.getElementById('shoutForm');
     const messagesContainer = document.getElementById('shoutboxMessages');
 
-    // 🚀 Изпращане на съобщение
+    // 🚀 Send message
     form?.addEventListener('submit', function(e) {
         e.preventDefault();
         const input = this.message;
@@ -169,7 +169,7 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
 
-    // 🔄 Зареждане на съобщенията
+    // 🔄 Load messages
     function loadMessages() {
         fetch('/shoutbox.php?action=get&_=<?= $timestamp ?>')
         .then(r => r.json())
@@ -186,13 +186,13 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
-    // 🔄 Автоматично обновяване
+    // 🔄 Auto refresh
     loadMessages();
     setInterval(loadMessages, 10000);
 
-    // ✅ ДЕЛЕГИРАНИ СЪБИТИЯ — работят за динамично добавени елементи
+    // ✅ DELEGATED EVENTS — work for dynamically added elements
 
-    // 😊 Отваряне на модала с усмивки
+    // 😊 Open smiles modal
     document.addEventListener('click', function(e) {
         if (e.target.id === 'smilesBtn' || e.target.closest('#smilesBtn')) {
             const modal = new bootstrap.Modal(document.getElementById('smilesModal'));
@@ -200,7 +200,7 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
 
-    // 🖼️ Вмъкване на усмивка
+    // 🖼️ Insert smile
     document.addEventListener('click', function(e) {
         if (e.target.classList.contains('smile-img')) {
             const smileCode = e.target.getAttribute('data-code');
@@ -214,7 +214,7 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
 
-    // 🗑️ Изтриване на съобщение
+    // 🗑️ Delete message
     document.addEventListener('click', function(e) {
         if (e.target.classList.contains('delete-btn')) {
             const id = e.target.getAttribute('data-id');
@@ -239,7 +239,7 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
 
-    // 🧹 Изчистване на историята
+    // 🧹 Clear history
     document.addEventListener('click', function(e) {
         if (e.target.id === 'clearShoutboxBtn' || e.target.closest('#clearShoutboxBtn')) {
             if (confirm('<?= addslashes($lang->get('confirm_clear_shoutbox')) ?>')) {

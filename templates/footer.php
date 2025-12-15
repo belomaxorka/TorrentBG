@@ -1,7 +1,7 @@
 <?php
-// Изчисляваме времето за зареждане на страницата
+// Calculate page load time
 $endTime = microtime(true);
-$loadTime = round(($endTime - $_SERVER['REQUEST_TIME_FLOAT']) * 1000, 2); // в милисекунди
+$loadTime = round(($endTime - $_SERVER['REQUEST_TIME_FLOAT']) * 1000, 2); // in milliseconds
 ?>
 
     </div> <!-- container -->

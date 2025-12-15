@@ -7,7 +7,7 @@ $pdo = Database::getInstance();
 $auth = new Auth($pdo);
 $lang = new Language($_SESSION['lang'] ?? 'en');
 
-// Само админи
+// Admins only
 if (!$auth->isLoggedIn() || $auth->getRank() < 6) {
     header("Location: /login.php");
     exit;
@@ -15,7 +15,7 @@ if (!$auth->isLoggedIn() || $auth->getRank() < 6) {
 
 $message = '';
 
-// Запазване на настройките
+// Save settings
 if ($_POST['save'] ?? false) {
     $site_name = trim($_POST['site_name'] ?? '');
     $site_url = trim($_POST['site_url'] ?? '');
@@ -62,7 +62,7 @@ $tracker_mode = getSetting($pdo, 'tracker_mode', 'private');
 <?php require_once __DIR__ . '/../templates/header.php'; ?>
 
 <style>
-/* Тъмна навигация */
+/* Dark navigation */
 .navbar {
     background-color: #212529 !important;
     box-shadow: 0 2px 4px rgba(0,0,0,0.2);
@@ -79,7 +79,7 @@ $tracker_mode = getSetting($pdo, 'tracker_mode', 'private');
     background-color: #495057;
 }
 
-/* Заглавие */
+/* Title */
 .admin-panel-title {
     background-color: #0d6efd;
     color: white;
@@ -90,7 +90,7 @@ $tracker_mode = getSetting($pdo, 'tracker_mode', 'private');
     font-size: 1.3rem;
 }
 
-/* Карти */
+/* Cards */
 .admin-card {
     border: 1px solid #dee2e6;
     border-radius: 8px;
@@ -98,7 +98,7 @@ $tracker_mode = getSetting($pdo, 'tracker_mode', 'private');
     overflow: hidden;
 }
 
-/* Цветни заглавия */
+/* Colored headers */
 .card-header.bg-primary { background-color: #0d6efd !important; }
 .card-header.bg-success { background-color: #28a745 !important; }
 .card-header.bg-info { background-color: #0dcaf0 !important; }
@@ -107,7 +107,7 @@ $tracker_mode = getSetting($pdo, 'tracker_mode', 'private');
 .card-header.bg-secondary { background-color: #6c757d !important; }
 .card-header.bg-dark { background-color: #212529 !important; }
 
-/* Пурпурен цвят */
+/* Purple color */
 .bg-purple {
     background-color: #6f42c1 !important;
 }
@@ -129,19 +129,19 @@ $tracker_mode = getSetting($pdo, 'tracker_mode', 'private');
         <?= $message ?>
 
         <form method="POST">
-            <!-- Име на трекъра -->
+            <!-- Tracker name -->
             <div class="mb-3">
                 <label class="form-label"><?= $lang->get('site_name') ?></label>
                 <input type="text" name="site_name" class="form-control" value="<?= htmlspecialchars($site_name) ?>" required>
             </div>
 
-            <!-- URL на трекъра -->
+            <!-- Tracker URL -->
             <div class="mb-3">
                 <label class="form-label"><?= $lang->get('site_url') ?></label>
                 <input type="url" name="site_url" class="form-control" value="<?= htmlspecialchars($site_url) ?>" required>
             </div>
 
-            <!-- Анонс URL -->
+            <!-- Announce URL -->
             <div class="mb-3">
                 <label class="form-label"><?= $lang->get('tracker_announce_url') ?></label>
                 <input type="text" name="tracker_announce" class="form-control" value="<?= htmlspecialchars($tracker_announce) ?>" placeholder="udp://tracker.yoursite.com:80/announce">
@@ -163,7 +163,7 @@ $tracker_mode = getSetting($pdo, 'tracker_mode', 'private');
                 </div>
             </div>
 
-            <!-- Имейл на трекъра -->
+            <!-- Tracker email -->
             <div class="mb-3">
                 <label class="form-label"><?= $lang->get('site_email') ?></label>
                 <input type="email" name="site_email" class="form-control" value="<?= htmlspecialchars($site_email) ?>" required>

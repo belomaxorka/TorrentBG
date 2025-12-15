@@ -226,7 +226,7 @@ if ($auth->isLoggedIn()) {
                     <?php endif; ?>
                 </ul>
 
-                <!-- ТЪРСАЧКА — сега е в дясно на главното меню -->
+                <!-- SEARCH — now on the right of the main menu -->
                 <form class="d-flex search-form" action="/search.php" method="GET">
                     <input class="form-control me-2" type="search" name="q" placeholder="<?= $lang->get('search_placeholder') ?>" aria-label="Search">
                     <button class="btn btn-outline-secondary" type="submit"><?= $lang->get('search_button') ?></button>
@@ -235,13 +235,13 @@ if ($auth->isLoggedIn()) {
         </div>
     </nav>
 
-    <!-- БЛОК СЪС СТАТИСТИКА ПОД МЕНЮТО -->
+    <!-- STATISTICS BLOCK UNDER MENU -->
     <div class="bg-dark text-light py-2 px-3 d-flex justify-content-between align-items-center small">
         <div>
             <?= $statsText ?>
         </div>
         <div class="d-flex align-items-center gap-3">
-            <!-- Добре дошъл + Ник -->
+            <!-- Welcome + Username -->
             <?php if ($auth->isLoggedIn()): ?>
                 <?= $greeting ?>
             <?php else: ?>
@@ -249,7 +249,7 @@ if ($auth->isLoggedIn()) {
                 <a href="/register.php" class="text-light text-decoration-none"><?= $lang->get('register') ?></a>
             <?php endif; ?>
 
-            <!-- Потребителско меню (само ако е логнат) -->
+            <!-- User menu (only if logged in) -->
             <?php if ($auth->isLoggedIn()): ?>
                 <li class="nav-item dropdown list-unstyled mb-0">
                     <a class="nav-link dropdown-toggle p-0 text-light" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown">
@@ -271,7 +271,7 @@ if ($auth->isLoggedIn()) {
                 </li>
             <?php endif; ?>
 
-            <!-- Смяна на език -->
+            <!-- Language change -->
             <li class="nav-item dropdown list-unstyled mb-0">
                 <a class="nav-link dropdown-toggle p-0 text-light" href="#" id="langDropdown" role="button" data-bs-toggle="dropdown">
                     <i class="bi bi-globe"></i>
@@ -295,7 +295,7 @@ if ($auth->isLoggedIn()) {
                 </ul>
             </li>
 
-            <!-- Смяна на тема -->
+            <!-- Theme change -->
             <li class="nav-item dropdown list-unstyled mb-0">
                 <a class="nav-link dropdown-toggle p-0 text-light" href="#" id="styleDropdown" role="button" data-bs-toggle="dropdown">
                     <i class="bi bi-palette"></i>

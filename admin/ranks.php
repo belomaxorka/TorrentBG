@@ -7,22 +7,22 @@ $pdo = Database::getInstance();
 $auth = new Auth($pdo);
 $lang = new Language($_SESSION['lang'] ?? 'en');
 
-// Само Owner може да влиза
+// Only Owner can access
 if ($auth->getRank() < 6) {
     die($lang->get('no_permission'));
 }
 
 $message = '';
 
-// Обработка на POST заявка
+// Process POST request
 if ($_POST['action'] ?? false) {
     try {
         $pdo->beginTransaction();
 
-        // Изтриваме старите права
+        // Delete old permissions
         $pdo->exec("DELETE FROM ranks_permissions");
 
-        // Записваме новите
+        // Save new permissions
         $permissions = [
             'torrents' => $lang->get('torrents'),
             'users' => $lang->get('users'),
@@ -58,7 +58,7 @@ if ($_POST['action'] ?? false) {
         $pdo->commit();
         $message = '<div class="alert alert-success">' . $lang->get('permissions_saved') . '</div>';
         
-        // 🔄 Редирект след запис, за да се презаредят данните
+        // 🔄 Redirect after save to reload data
         header("Refresh: 0");
         exit;
 
@@ -68,7 +68,7 @@ if ($_POST['action'] ?? false) {
     }
 }
 
-// ✅ Поправено извличане на текущите права — без FETCH_GROUP
+// ✅ Fixed fetching current permissions — without FETCH_GROUP
 $stmt = $pdo->query("
     SELECT rank_id, permission_key, can_view, can_edit
     FROM ranks_permissions
@@ -82,7 +82,7 @@ while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
     ];
 }
 
-// Дефинираме ранговете и правата
+// Define ranks and permissions
 $ranks = [
     6 => $lang->get('owner'),
     5 => $lang->get('moderator'),

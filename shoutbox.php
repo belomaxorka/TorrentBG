@@ -35,7 +35,7 @@ if ($_GET['action'] ?? false) {
                 echo '<strong>' . htmlspecialchars($msg['username']) . ':</strong>';
                 echo '<span class="message-content">';
                 
-                // ✅ Парсване на усмивки
+                // ✅ Parse smiles
                 $message = htmlspecialchars($msg['message']);
                 $smileMap = [
                     'smile' => '😊',
@@ -93,7 +93,7 @@ if ($_GET['action'] ?? false) {
         exit;
     }
 
-    // 🗑️ Изтриване на съобщение
+    // 🗑️ Delete message
     if ($_GET['action'] === 'delete' && $auth->isLoggedIn()) {
         $id = (int)($_POST['id'] ?? 0);
         if ($id <= 0) {
@@ -124,7 +124,7 @@ if ($_GET['action'] ?? false) {
         exit;
     }
 
-    // 🧹 Изчистване на цялата история (само за Owner+)
+    // 🧹 Clear entire history (Owner+ only)
     if ($_GET['action'] === 'clear' && $auth->isLoggedIn() && $auth->getRank() >= 6) {
         try {
             $pdo->exec("DELETE FROM shoutbox");
