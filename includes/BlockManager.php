@@ -29,13 +29,13 @@ class BlockManager {
             if (!defined('IN_BLOCK')) {
                 define('IN_BLOCK', true);
             }
-            // Предаваме променливите в обхвата на блока
+            // Pass variables to block scope
             extract(compact('pdo', 'auth', 'lang'), EXTR_REFS);
             require $filePath;
         }
     }
 
-    // За админ панела — всички блокове
+    // For admin panel — all blocks
     public function getAllBlocks(): array {
         $stmt = $this->pdo->query("SELECT * FROM blocks ORDER BY position, `order`");
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -73,7 +73,7 @@ class BlockManager {
     }
 
     public function deleteBlock(int $id): bool {
-        // Проверка дали е заключен
+        // Check if locked
         $stmt = $this->pdo->prepare("SELECT is_locked FROM blocks WHERE id = ?");
         $stmt->execute([$id]);
         $locked = $stmt->fetchColumn();

@@ -10,7 +10,7 @@ class Security {
         $this->ip = $_SERVER['REMOTE_ADDR'] ?? '127.0.0.1';
     }
     
-    // CSRF защита
+    // CSRF protection
     public function generateCSRFToken(): string {
         if (!isset($_SESSION['csrf_token'])) {
             $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
@@ -35,14 +35,14 @@ class Security {
             return false;
         }
         
-        // Записваме опита
+        // Record the attempt
         $stmt = $this->pdo->prepare("INSERT INTO rate_limits (ip, action) VALUES (?, ?)");
         $stmt->execute([$this->ip, $action]);
         
         return true;
     }
     
-    // XSS филтриране
+    // XSS filtering
     public static function sanitizeInput(string $input): string {
         return htmlspecialchars($input, ENT_QUOTES, 'UTF-8');
     }
@@ -61,9 +61,9 @@ class Security {
         return $result;
     }
     
-    // Проверка за DDoS
+    // DDoS protection check
     public function checkDDoSProtection(): bool {
-        // Проверка за твърде много заявки от един IP
+        // Check for too many requests from one IP
         $stmt = $this->pdo->prepare("
             SELECT COUNT(*) FROM ddos_protection 
             WHERE ip = ? AND created_at > NOW() - INTERVAL 1 MINUTE
@@ -71,21 +71,21 @@ class Security {
         $stmt->execute([$this->ip]);
         $requests = $stmt->fetchColumn();
         
-        if ($requests > 100) { // Максимум 100 заявки на минута
-            // Блокираме IP за 1 час
+        if ($requests > 100) { // Maximum 100 requests per minute
+            // Block IP for 1 hour
             $stmt = $this->pdo->prepare("INSERT INTO blocked_ips (ip, reason, blocked_until) VALUES (?, 'Too many requests', DATE_ADD(NOW(), INTERVAL 1 HOUR))");
             $stmt->execute([$this->ip]);
             return false;
         }
         
-        // Записваме заявката
+        // Record the request
         $stmt = $this->pdo->prepare("INSERT INTO ddos_protection (ip) VALUES (?)");
         $stmt->execute([$this->ip]);
         
         return true;
     }
     
-    // Проверка дали IP е блокиран
+    // Check if IP is blocked
     public function isIPBlocked(): bool {
         $stmt = $this->pdo->prepare("SELECT id FROM blocked_ips WHERE ip = ? AND blocked_until > NOW()");
         $stmt->execute([$this->ip]);

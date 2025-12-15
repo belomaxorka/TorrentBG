@@ -1,5 +1,5 @@
 <?php
-// === ДОБАВЕНО: Проверка за инсталация — пренасочва към install/index.php ===
+// === ADDED: Installation check — redirects to install/index.php ===
 $configPath = __DIR__ . '/includes/config.php';
 if (file_exists($configPath)) {
     $config = require $configPath;
@@ -8,7 +8,7 @@ if (file_exists($configPath)) {
         exit;
     }
 } else {
-    // Ако config.php липсва — също пренасочи към инсталатора
+    // If config.php is missing — also redirect to installer
     header('Location: install/index.php');
     exit;
 }
@@ -19,10 +19,10 @@ require_once __DIR__ . '/includes/BlockManager.php';
 
 $lang = new Language($_SESSION['lang'] ?? 'en');
 
-// Инициализираме BlockManager
+// Initialize BlockManager
 $blockManager = new BlockManager($pdo);
 
-// Главно съдържание
+// Main content
 ?>
 <div class="container-fluid" id="main-content">
     <div class="alert alert-info">
@@ -30,10 +30,10 @@ $blockManager = new BlockManager($pdo);
     </div>
 
     <div class="row">
-        <!-- Лява колона -->
+        <!-- Left column -->
         <div class="col-md-3">
             <?php
-            // 1. Първо: показваме всички активни блокове от BlockManager (вкл. "Потребителска информация")
+            // 1. First: show all active blocks from BlockManager (incl. "User Information")
             $leftBlocks = $blockManager->getBlocksByPosition('left');
             foreach ($leftBlocks as $block) {
                 if ($block['is_active']) {
@@ -41,7 +41,7 @@ $blockManager = new BlockManager($pdo);
                 }
             }
 
-            // 2. След това: винаги добавяме анкетата
+            // 2. Then: always add the poll
 if (file_exists(__DIR__ . '/blocks/poll.php')) {
     if (!defined('IN_BLOCK')) {
         define('IN_BLOCK', true);
@@ -51,7 +51,7 @@ if (file_exists(__DIR__ . '/blocks/poll.php')) {
             ?>
         </div>
 
-        <!-- Централна колона -->
+        <!-- Center column -->
         <div class="col-md-6">
             <?php
             $centerBlocks = $blockManager->getBlocksByPosition('center');
@@ -63,7 +63,7 @@ if (file_exists(__DIR__ . '/blocks/poll.php')) {
             ?>
         </div>
 
-        <!-- Дясна колона -->
+        <!-- Right column -->
         <div class="col-md-3">
             <?php
             $rightBlocks = $blockManager->getBlocksByPosition('right');

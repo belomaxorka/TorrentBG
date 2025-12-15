@@ -6,22 +6,22 @@ require_once __DIR__ . '/includes/Language.php';
 
 $pdo = Database::getInstance();
 
-// Почистване на неактивни пиъри (повече от 30 минути)
+// Clean up inactive peers (older than 30 minutes)
 $deletedPeers = $pdo->exec("DELETE FROM peers WHERE last_announce < NOW() - INTERVAL 30 MINUTE");
 
-// Почистване на стари сесии (повече от 7 дни)
+// Clean up old sessions (older than 7 days)
 $deletedSessions = $pdo->exec("DELETE FROM sessions WHERE last_activity < NOW() - INTERVAL 7 DAY");
 
-// Почистване на стари известия (повече от 30 дни)
+// Clean up old notifications (older than 30 days)
 $deletedNotifications = $pdo->exec("DELETE FROM notifications WHERE created_at < NOW() - INTERVAL 30 DAY");
 
-// Обновяване на статистиките за всички торенти
+// Update statistics for all torrents
 $stmt = $pdo->query("SELECT id, info_hash FROM torrents");
 $torrents = $stmt->fetchAll();
 
 $updatedTorrents = 0;
 foreach ($torrents as $torrent) {
-    // Преброяваме активните сидъри и лийчъри
+    // Count active seeders and leechers
     $seeders = $pdo->prepare("SELECT COUNT(*) FROM peers WHERE torrent_id = ? AND is_seeder = 1 AND last_announce >= NOW() - INTERVAL 30 MINUTE");
     $seeders->execute([$torrent['id']]);
     $seederCount = $seeders->fetchColumn();
@@ -30,7 +30,7 @@ foreach ($torrents as $torrent) {
     $leechers->execute([$torrent['id']]);
     $leecherCount = $leechers->fetchColumn();
     
-    // Обновяваме статистиките
+    // Update statistics
     $pdo->prepare("
         UPDATE torrents 
         SET seeders = ?, leechers = ? 
@@ -40,7 +40,7 @@ foreach ($torrents as $torrent) {
     $updatedTorrents++;
 }
 
-// Записваме в лог файл
+// Write to log file
 $logMessage = "[" . date('Y-m-d H:i:s') . "] Cleanup completed: Deleted $deletedPeers peers, $deletedSessions sessions, $deletedNotifications notifications, Updated $updatedTorrents torrents\n";
 file_put_contents(__DIR__ . '/logs/cleanup.log', $logMessage, FILE_APPEND);
 

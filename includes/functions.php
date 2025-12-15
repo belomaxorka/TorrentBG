@@ -2,7 +2,7 @@
 declare(strict_types=1);
 
 function parseBBC(string $text): string {
-    // 1. Escape HTML, за да предотвратим XSS
+    // 1. Escape HTML to prevent XSS
     $text = htmlspecialchars($text, ENT_QUOTES, 'UTF-8');
 
     // 2. Bold
@@ -14,10 +14,10 @@ function parseBBC(string $text): string {
     // Strikethrough
     $text = preg_replace('/\[s\](.*?)\[\/s\]/is', '<del>$1</del>', $text);
 
-    // 3. Цвят
+    // 3. Color
     $text = preg_replace('/\[color=([a-zA-Z0-9#]+)\](.*?)\[\/color\]/is', '<span style="color: $1;">$2</span>', $text);
 
-    // 4. Размер на шрифта
+    // 4. Font size
     $sizeMap = [
         'xx-small' => '0.7em',
         'x-small'  => '0.8em',
@@ -34,33 +34,33 @@ function parseBBC(string $text): string {
         return "<span style=\"font-size: {$fontSize};\">{$content}</span>";
     }, $text);
 
-    // 5. Шрифт
+    // 5. Font
     $text = preg_replace('/\[font=([a-zA-Z0-9\-\s]+)\](.*?)\[\/font\]/is', '<span style="font-family: $1;">$2</span>', $text);
 
-    // 6. Подравняване
+    // 6. Alignment
     $text = preg_replace('/\[align=(left|center|right|justify)\](.*?)\[\/align\]/is', '<div style="text-align: $1;">$2</div>', $text);
 
-    // 7. Цитат
+    // 7. Quote
     $text = preg_replace('/\[quote\](.*?)\[\/quote\]/is', '<blockquote style="border-left: 3px solid #ccc; margin: 1em 0; padding-left: 1em; color: #555;">$1</blockquote>', $text);
 
-    // 8. Код
+    // 8. Code
     $text = preg_replace('/\[code\](.*?)\[\/code\]/is', '<pre style="background: #f8f9fa; padding: 10px; border: 1px solid #e9ecef; border-radius: 4px; overflow-x: auto;">$1</pre>', $text);
 
-    // 9. Списък
+    // 9. List
     $text = preg_replace('/\[list\](.*?)\[\/list\]/is', '<ul>$1</ul>', $text);
     $text = preg_replace('/\[\*\](.*?)(?=\[\*\]|\[\/list\]|$)/is', '<li>$1</li>', $text);
 
-    // 10. Spoiler (с <details>)
+    // 10. Spoiler (with <details>)
     $text = preg_replace('/\[spoiler\](.*?)\[\/spoiler\]/is', '<details style="margin: 1em 0;"><summary style="cursor: pointer; padding: 6px 10px; background: #f1f1f1; display: inline-block;">Spoiler</summary><div style="padding: 10px; border: 1px solid #ddd; margin-top: 5px;">$1</div></details>', $text);
 
     // 11. URL
     $text = preg_replace('/\[url=(https?:\/\/[^\s\]]+)\](.*?)\[\/url\]/i', '<a href="$1" target="_blank" rel="nofollow">$2</a>', $text);
     $text = preg_replace('/\[url\](https?:\/\/[^\s\]]+)\[\/url\]/i', '<a href="$1" target="_blank" rel="nofollow">$1</a>', $text);
 
-    // 12. Изображение
+    // 12. Image
     $text = preg_replace('/\[img\](https?:\/\/[^\s\]]+)\[\/img\]/i', '<img src="$1" class="img-fluid" alt="Image" style="max-width: 100%; height: auto;">', $text);
 
-    // 13. Смайли
+    // 13. Smileys
     $smiles = [
         'smile' => 'smile.gif',
         'wink' => 'wink.gif',

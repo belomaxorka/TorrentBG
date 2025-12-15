@@ -1,19 +1,19 @@
 <?php
-// ЗАПОЧВАМЕ ИЗМЕРВАНЕ НА ВРЕМЕТО
+// START TIME MEASUREMENT
 if (!isset($_SERVER['REQUEST_TIME_FLOAT'])) {
     $_SERVER['REQUEST_TIME_FLOAT'] = microtime(true);
 }
 
-// Дефинираме ROOT пътя — основата на проекта
+// Define ROOT path — project base
 define('ROOT_PATH', dirname(__DIR__) . DIRECTORY_SEPARATOR);
 
-// Включваме класа (без "use", защото използваме глобалния alias)
+// Include classes (without "use", because we use global alias)
 require_once ROOT_PATH . 'includes/Database.php';
 require_once ROOT_PATH . 'includes/Auth.php';
 require_once ROOT_PATH . 'includes/StyleManager.php';
 require_once ROOT_PATH . 'includes/Language.php';
 
-// Проверка дали системата е инсталирана
+// Check if system is installed
 $configPath = ROOT_PATH . 'includes/config.php';
 if (!file_exists($configPath)) {
     header('Location: /install/index.php');
@@ -26,9 +26,9 @@ if (!($config['site']['installed'] ?? false)) {
     exit;
 }
 
-// Инициализираме всичко
+// Initialize everything
 try {
-    // Сега getInstance() връща PDO директно
+    // Now getInstance() returns PDO directly
     $pdo = Database::getInstance();
 
     if ($pdo === null) {
@@ -44,7 +44,7 @@ try {
     exit;
 }
 
-// === ДОБАВЕНА ФУНКЦИЯ: Вземи името на сайта от настройките ===
+// === ADDED FUNCTION: Get site name from settings ===
 function getSiteName($pdo) {
     $stmt = $pdo->prepare("SELECT value FROM settings WHERE name = 'site_name'");
     $stmt->execute();
@@ -53,13 +53,13 @@ function getSiteName($pdo) {
 $siteName = getSiteName($pdo);
 // =============================================================
 
-// Обработка на смяна на език
+// Language change handling
 if (isset($_GET['set_lang']) && isset($_GET['lang'])) {
     $newLang = $_GET['lang'];
     if (in_array($newLang, $lang->getAvailable())) {
         $_SESSION['lang'] = $newLang;
         setcookie('lang', $newLang, time() + 365*24*3600, '/');
-        // Пренасочваме към същата страница, но без set_lang
+        // Redirect to same page but without set_lang
         $query = $_GET;
         unset($query['set_lang']);
         unset($query['lang']);
@@ -70,7 +70,7 @@ if (isset($_GET['set_lang']) && isset($_GET['lang'])) {
     }
 }
 
-// Автоматично създаване на папки ако не съществуват — относително към ROOT
+// Automatically create folders if they don't exist — relative to ROOT
 $requiredDirs = [
     'torrents',
     'subtitles',
@@ -86,7 +86,7 @@ foreach ($requiredDirs as $dir) {
     }
 }
 
-// Създаваме таблицата `peers`, ако не съществува
+// Create `peers` table if it doesn't exist
 try {
     $pdo->exec("CREATE TABLE IF NOT EXISTS `peers` (
         `id` INT NOT NULL AUTO_INCREMENT,
@@ -105,10 +105,10 @@ try {
         KEY `seeder` (`seeder`)
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;");
 } catch (Exception $e) {
-    // Таблицата вече съществува или няма нужда да се създава
+    // Table already exists or no need to create
 }
 
-// Функция за генериране на URL със запазени параметри
+// Function to generate URL with preserved parameters
 function buildLangUrl($langCode) {
     $params = $_GET;
     $params['lang'] = $langCode;
@@ -116,24 +116,24 @@ function buildLangUrl($langCode) {
     return '?' . http_build_query($params);
 }
 
-// === СТАТИСТИКА С ЦВЕТНИ САЙДЕРИ И ЛИЙЧЪРИ ===
+// === STATISTICS WITH COLORED SEEDERS AND LEECHERS ===
 $stmt = $pdo->query("SELECT COUNT(*) FROM users");
 $totalUsers = $stmt->fetchColumn();
 
 $stmt = $pdo->query("SELECT COUNT(*) FROM torrents");
 $totalTorrents = $stmt->fetchColumn();
 
-// Проверка дали таблицата "peers" има колона "seeder"
+// Check if "peers" table has "seeder" column
 $hasSeederColumn = false;
 try {
     $stmt = $pdo->query("SELECT seeder FROM peers LIMIT 1");
     $hasSeederColumn = true;
 } catch (PDOException $e) {
-    // Колоната "seeder" не съществува
+    // Column "seeder" doesn't exist
 }
 
 if ($hasSeederColumn) {
-    // Премахваме старите пиъри
+    // Remove old peers
     $pdo->exec("DELETE FROM peers WHERE last_announce < NOW() - INTERVAL 30 MINUTE");
 
     $stmt = $pdo->query("SELECT COUNT(*) FROM peers WHERE seeder = 1");
@@ -158,7 +158,7 @@ if ($hasSeederColumn) {
         $seederPercentage
     );
 } else {
-    // Показваме само основната статистика
+    // Show only basic statistics
     $statsText = sprintf(
         "%s %s, %s %s",
         number_format($totalUsers),

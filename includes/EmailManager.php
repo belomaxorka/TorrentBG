@@ -12,7 +12,7 @@ class EmailManager {
     
     public function sendNotificationEmail(int $userId, string $subject, string $message, string $type = 'notification'): bool {
         try {
-            // Взимаме имейла на потребителя
+            // Get user's email
             $stmt = $this->pdo->prepare("SELECT email, language FROM users WHERE id = ?");
             $stmt->execute([$userId]);
             $user = $stmt->fetch();
@@ -21,19 +21,19 @@ class EmailManager {
                 return false;
             }
             
-            // Проверка дали потребителят иска да получава този тип известия
+            // Check if user wants to receive this type of notification
             $stmt = $this->pdo->prepare("SELECT receive_emails FROM user_settings WHERE user_id = ? AND type = ?");
             $stmt->execute([$userId, $type]);
             $setting = $stmt->fetch();
             
             if ($setting && !$setting['receive_emails']) {
-                return true; // Не изпращаме, но не е грешка
+                return true; // Don't send, but not an error
             }
             
-            // Заглавие
+            // Subject
             $emailSubject = "[Torrent Tracker] " . $subject;
             
-            // Тяло на имейла
+            // Email body
             $emailBody = "
             <html>
             <head>
@@ -65,7 +65,7 @@ class EmailManager {
             </html>
             ";
             
-            // Заглавия
+            // Headers
             $headers = [
                 'From: ' . ($this->config['email']['from'] ?? 'noreply@torrenttracker.com'),
                 'Reply-To: ' . ($this->config['email']['reply_to'] ?? 'noreply@torrenttracker.com'),
@@ -74,11 +74,11 @@ class EmailManager {
                 'Content-Type: text/html; charset=UTF-8'
             ];
             
-            // Изпращане
+            // Send email
             $result = mail($user['email'], $emailSubject, $emailBody, implode("\r\n", $headers));
             
             if ($result) {
-                // Записваме в лог
+                // Log email
                 $this->logEmail($userId, $subject, $type);
                 return true;
             }
@@ -105,11 +105,11 @@ class EmailManager {
             ");
             $stmt->execute([$userId, $subject, $type]);
         } catch (Exception $e) {
-            // Игнорираме грешки при логване
+            // Ignore logging errors
         }
     }
     
-    // Масово изпращане на имейли
+    // Bulk email sending
     public function sendBulkEmail(array $userIds, string $subject, string $message, string $type = 'bulk'): int {
         $sentCount = 0;
         
@@ -118,15 +118,15 @@ class EmailManager {
                 $sentCount++;
             }
             
-            // Пауза, за да не претоварваме сървъра
-            usleep(100000); // 0.1 секунда
+            // Pause to avoid overloading the server
+            usleep(100000); // 0.1 second
         }
         
         return $sentCount;
     }
 }
 
-// Създаваме таблица за логване на имейли (ако не съществува)
+// Create email logging table (if not exists)
 try {
     $pdo->exec("
         CREATE TABLE IF NOT EXISTS `email_logs` (
@@ -154,5 +154,5 @@ try {
         ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
     ");
 } catch (Exception $e) {
-    // Игнорираме грешки при създаване на таблици
+    // Ignore table creation errors
 }

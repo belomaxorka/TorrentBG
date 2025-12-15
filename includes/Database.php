@@ -6,17 +6,17 @@ class Database {
     private $pdo;
 
     private function __construct() {
-        // Проверяваме дали сме в инсталационния процес
+        // Check if we are in the installation process
         $inInstaller = strpos($_SERVER['SCRIPT_NAME'] ?? '', '/install') !== false;
 
         $config = require __DIR__ . '/config.php';
 
-        // Ако не е инсталирано и сме в инсталатора — не правим връзка
+        // If not installed and we are in the installer — don't connect
         if (!$inInstaller && !($config['site']['installed'] ?? false)) {
             throw new \RuntimeException('System not installed. Please run installer first.');
         }
 
-        // Ако е инсталирано — правим връзка
+        // If installed — connect to database
         if ($config['site']['installed'] ?? false) {
             $db = $config['db'];
             $dsn = "mysql:host={$db['host']};dbname={$db['name']};charset={$db['charset']}";
@@ -25,12 +25,12 @@ class Database {
                 \PDO::ATTR_DEFAULT_FETCH_MODE => \PDO::FETCH_ASSOC,
             ]);
         }
-        // Ако не е инсталирано и не сме в инсталатора — няма връзка (но това няма да се случи, защото index.php пренасочва към install.php)
+        // If not installed and not in installer — no connection (but this won't happen because index.php redirects to install.php)
     }
 
     /**
-     * Връща PDO връзката директно — за съвместимост със стария код
-     * Сега Database::getInstance() връща \PDO|null, а не обект от класа.
+     * Returns PDO connection directly — for compatibility with old code
+     * Now Database::getInstance() returns \PDO|null, not a class object.
      */
     public static function getInstance(): ?\PDO {
         if (self::$instance === null) {
@@ -40,5 +40,5 @@ class Database {
     }
 }
 
-// Глобален alias: позволява използването на \Database навсякъде без "use App\Database;"
+// Global alias: allows using \Database everywhere without "use App\Database;"
 class_alias('App\Database', 'Database');

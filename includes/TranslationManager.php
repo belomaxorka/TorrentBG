@@ -7,7 +7,7 @@ class TranslationManager {
     public function __construct(PDO $pdo) {
         $this->pdo = $pdo;
         
-        // Създаваме таблицата за преводи (ако не съществува)
+        // Create translations table (if not exists)
         try {
             $this->pdo->exec("
                 CREATE TABLE IF NOT EXISTS `translations` (
@@ -30,11 +30,11 @@ class TranslationManager {
                 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
             ");
         } catch (Exception $e) {
-            // Игнорираме грешки при създаване на таблица
+            // Ignore table creation errors
         }
     }
     
-    // Предлагане на превод
+    // Suggest translation
     public function suggestTranslation(string $key, string $language, string $translation, int $userId): bool {
         try {
             $stmt = $this->pdo->prepare("
@@ -53,7 +53,7 @@ class TranslationManager {
         }
     }
     
-    // Одобрение на превод
+    // Approve translation
     public function approveTranslation(int $translationId, int $approverId): bool {
         try {
             $stmt = $this->pdo->prepare("
@@ -68,7 +68,7 @@ class TranslationManager {
         }
     }
     
-    // Отхвърляне на превод
+    // Reject translation
     public function rejectTranslation(int $translationId, int $approverId): bool {
         try {
             $stmt = $this->pdo->prepare("
@@ -83,7 +83,7 @@ class TranslationManager {
         }
     }
     
-    // Вземане на одобрен превод
+    // Get approved translation
     public function getApprovedTranslation(string $key, string $language): ?string {
         try {
             $stmt = $this->pdo->prepare("
@@ -99,7 +99,7 @@ class TranslationManager {
         }
     }
     
-    // Вземане на всички предложени преводи (за администратор)
+    // Get all pending translations (for administrator)
     public function getPendingTranslations(int $limit = 50, int $offset = 0): array {
         try {
             $stmt = $this->pdo->prepare("
@@ -119,7 +119,7 @@ class TranslationManager {
         }
     }
     
-    // Вземане на статистики за преводи
+    // Get translation statistics
     public function getTranslationStats(): array {
         try {
             $stats = [
@@ -130,17 +130,17 @@ class TranslationManager {
                 'languages' => []
             ];
             
-            // Общ брой
+            // Total count
             $stmt = $this->pdo->query("SELECT COUNT(*) FROM translations");
             $stats['total'] = $stmt->fetchColumn();
             
-            // Брой по статус
+            // Count by status
             $stmt = $this->pdo->query("SELECT status, COUNT(*) as count FROM translations GROUP BY status");
             foreach ($stmt->fetchAll() as $row) {
                 $stats[$row['status']] = $row['count'];
             }
             
-            // Брой по езици
+            // Count by language
             $stmt = $this->pdo->query("SELECT language, COUNT(*) as count FROM translations GROUP BY language ORDER BY count DESC");
             $stats['languages'] = $stmt->fetchAll(PDO::FETCH_KEY_PAIR);
             

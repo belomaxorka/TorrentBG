@@ -8,7 +8,7 @@ class Auth {
     public function __construct(PDO $pdo) {
         $this->pdo = $pdo;
         
-        // Проверка дали сесията вече е стартирана
+        // Check if session is already started
         if (session_status() === PHP_SESSION_NONE) {
             session_start();
         }
@@ -36,7 +36,7 @@ class Auth {
             $_SESSION['lang'] = $user['language'] ?? 'en';
             $_SESSION['style'] = $user['style'] ?? 'light';
 
-            // Обновяваме last_login
+            // Update last_login
             $this->pdo->prepare("UPDATE users SET last_login = NOW() WHERE id = ?")->execute([$user['id']]);
 
             $this->user = $user;
@@ -64,14 +64,14 @@ class Auth {
     }
 
     public function hasPermission(string $permission): bool {
-        // Тук ще добавим по-късно проверка по рангове
+        // Rank-based permission check
         $rankPermissions = [
             1 => [], // Guest
             2 => ['view_torrents', 'view_forum'], // User
             3 => ['view_torrents', 'view_forum', 'upload_torrent'], // Uploader
             4 => ['view_torrents', 'view_forum', 'upload_torrent', 'edit_own_torrent'], // Validator
             5 => ['view_torrents', 'view_forum', 'upload_torrent', 'edit_own_torrent', 'edit_any_torrent', 'delete_own_torrent', 'moderate_forum'], // Moderator
-            6 => ['*'], // Owner — всичко
+            6 => ['*'], // Owner — everything
         ];
 
         $permissions = $rankPermissions[$this->getRank()] ?? [];

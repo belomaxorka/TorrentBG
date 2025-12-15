@@ -6,7 +6,7 @@ class Language {
     private array $translations = [];
 
     public function __construct(string $langCode = 'en') {
-        // Поддържани езици
+        // Supported languages
         $supported = ['en', 'bg', 'fr', 'de', 'ru'];
         $this->langCode = in_array($langCode, $supported) ? $langCode : 'en';
         $this->loadLanguage();
@@ -17,7 +17,7 @@ class Language {
         if (file_exists($file)) {
             $this->translations = require $file;
         } else {
-            // Fallback към английски
+            // Fallback to English
             $this->translations = require __DIR__ . '/../language/en.php';
         }
     }

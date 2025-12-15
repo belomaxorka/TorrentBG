@@ -10,10 +10,10 @@ class ExternalAPI {
         $this->config = require __DIR__ . '/../config.php';
     }
     
-    // IMDb API интеграция
+    // IMDb API integration
     public function getIMDbInfo(string $imdbId): ?array {
         try {
-            // Проверка в кеша
+            // Check cache
             $stmt = $this->pdo->prepare("
                 SELECT data, created_at 
                 FROM imdb_cache 
@@ -26,7 +26,7 @@ class ExternalAPI {
                 return json_decode($cached['data'], true);
             }
             
-            // Ако няма в кеша, извличаме от API
+            // If not in cache, fetch from API
             $apiKey = $this->config['imdb']['api_key'] ?? '';
             if (empty($apiKey)) {
                 return null;
@@ -36,7 +36,7 @@ class ExternalAPI {
             $response = $this->makeRequest($url);
             
             if ($response && isset($response['title'])) {
-                // Записваме в кеша
+                // Save to cache
                 $stmt = $this->pdo->prepare("
                     INSERT INTO imdb_cache (imdb_id, data) 
                     VALUES (?, ?) 
@@ -55,10 +55,10 @@ class ExternalAPI {
         }
     }
     
-    // YouTube API интеграция
+    // YouTube API integration
     public function getYouTubeInfo(string $videoId): ?array {
         try {
-            // Проверка в кеша
+            // Check cache
             $stmt = $this->pdo->prepare("
                 SELECT data, created_at 
                 FROM youtube_cache 
@@ -71,7 +71,7 @@ class ExternalAPI {
                 return json_decode($cached['data'], true);
             }
             
-            // Ако няма в кеша, извличаме от API
+            // If not in cache, fetch from API
             $apiKey = $this->config['youtube']['api_key'] ?? '';
             if (empty($apiKey)) {
                 return null;
@@ -93,7 +93,7 @@ class ExternalAPI {
                     'published_at' => $video['snippet']['publishedAt'] ?? ''
                 ];
                 
-                // Записваме в кеша
+                // Save to cache
                 $stmt = $this->pdo->prepare("
                     INSERT INTO youtube_cache (video_id, data) 
                     VALUES (?, ?) 
@@ -112,7 +112,7 @@ class ExternalAPI {
         }
     }
     
-    // Извличане на IMDb ID от URL
+    // Extract IMDb ID from URL
     public function extractIMDbID(string $url): ?string {
         if (preg_match('/imdb\.com\/title\/(tt\d+)/i', $url, $matches)) {
             return $matches[1];
@@ -120,7 +120,7 @@ class ExternalAPI {
         return null;
     }
     
-    // Извличане на YouTube video ID от URL
+    // Extract YouTube video ID from URL
     public function extractYouTubeID(string $url): ?string {
         $pattern = '/(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/embed\/)([a-zA-Z0-9_-]+)/';
         if (preg_match($pattern, $url, $matches)) {
@@ -150,7 +150,7 @@ class ExternalAPI {
     }
 }
 
-// Създаваме таблиците за кеш (ако не съществуват)
+// Create cache tables (if not exist)
 try {
     $pdo->exec("
         CREATE TABLE IF NOT EXISTS `imdb_cache` (
@@ -174,5 +174,5 @@ try {
         ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
     ");
 } catch (Exception $e) {
-    // Игнорираме грешки при създаване на таблици
+    // Ignore table creation errors
 }
