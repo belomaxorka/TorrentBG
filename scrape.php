@@ -1,26 +1,26 @@
 <?php
 declare(strict_types=1);
 
-// scrape.php - Предоставя статистики за торентите
+// scrape.php - Provides statistics for torrents
 error_reporting(0);
 
 require_once __DIR__ . '/includes/Database.php';
 
 $pdo = Database::getInstance();
 
-// Помощна функция за настройки
+// Helper function for settings
 function getSetting($pdo, $name, $default = '') {
     $stmt = $pdo->prepare("SELECT value FROM settings WHERE name = ?");
     $stmt->execute([$name]);
     return $stmt->fetchColumn() ?: $default;
 }
 
-// Проверка за info_hash
+// Check for info_hash
 if (!isset($_GET['info_hash'])) {
     sendError(100, 'Missing info_hash parameter');
 }
 
-// Обработка на единичен или масив от info_hash
+// Process single or array of info_hash
 $infoHashes = [];
 if (is_array($_GET['info_hash'])) {
     foreach ($_GET['info_hash'] as $hash) {
@@ -34,7 +34,7 @@ if (is_array($_GET['info_hash'])) {
     }
 }
 
-// Ограничение: максимум 74 торента според BEP 0003
+// Limit: maximum 74 torrents according to BEP 0003
 if (empty($infoHashes) || count($infoHashes) > 74) {
     sendError(101, 'Invalid or too many info_hash values (max 74 allowed)');
 }
@@ -43,7 +43,7 @@ $trackerMode = getSetting($pdo, 'tracker_mode', 'private');
 $response = ['files' => []];
 
 if ($trackerMode === 'private') {
-    // Вземи torrent_id и info_hash за валидни торенти
+    // Get torrent_id and info_hash for valid torrents
     $placeholders = str_repeat('?,', count($infoHashes) - 1) . '?';
     $stmt = $pdo->prepare("
         SELECT id, info_hash FROM torrents WHERE info_hash IN ($placeholders)
@@ -54,7 +54,7 @@ if ($trackerMode === 'private') {
         $validTorrents[$row['info_hash']] = $row['id'];
     }
 
-    // Събери статистика от peers за всички валидни info_hash наведнъж
+    // Collect statistics from peers for all valid info_hash at once
     if (!empty($validTorrents)) {
         $validHashes = array_keys($validTorrents);
         $placeholders2 = str_repeat('?,', count($validHashes) - 1) . '?';
@@ -78,11 +78,11 @@ if ($trackerMode === 'private') {
         }
     }
 
-    // Формирай отговора
+    // Form response
     foreach ($infoHashes as $hash) {
         if (isset($validTorrents[$hash])) {
             $stats = $peerStats[$hash] ?? ['complete' => 0, 'incomplete' => 0];
-            // Ако искаш downloaded от torrents.completed, добави го от таблицата torrents
+            // If you want downloaded from torrents.completed, add it from torrents table
             $response['files'][$hash] = [
                 'complete' => $stats['complete'],
                 'incomplete' => $stats['incomplete'],
@@ -97,7 +97,7 @@ if ($trackerMode === 'private') {
         }
     }
 } else {
-    // OPEN режим: броим директно от peers по info_hash
+    // OPEN mode: count directly from peers by info_hash
     $placeholders = str_repeat('?,', count($infoHashes) - 1) . '?';
     $stmt = $pdo->prepare("
         SELECT 
@@ -128,12 +128,12 @@ if ($trackerMode === 'private') {
     }
 }
 
-// Изпращаме bencode отговор
+// Send bencode response
 header('Content-Type: text/plain');
 echo bencode($response);
 exit;
 
-// Функции за bencode
+// Functions for bencode
 function bencode($data) {
     if (is_array($data)) {
         if (isset($data[0]) || empty($data)) { // list

@@ -1,5 +1,5 @@
 <?php
-// Първо — дефинираме namespace Bencode
+// First — define namespace Bencode
 namespace Bencode {
     class Bencode {
         public static function decode($string) {
@@ -131,7 +131,7 @@ namespace Bencode {
     }
 }
 
-// След namespace — преминаваме към глобалното ниво и включваме зависимости
+// After namespace — move to global level and include dependencies
 namespace {
     require_once __DIR__ . '/includes/Database.php';
     require_once __DIR__ . '/includes/Auth.php';
@@ -149,7 +149,7 @@ namespace {
         exit;
     }
 
-    // === ДОБАВЕНО: Вземи анонс URL от настройките ===
+    // === ADDED: Get announce URL from settings ===
     $stmt = $pdo->prepare("SELECT value FROM settings WHERE name = 'tracker_announce'");
     $stmt->execute();
     $announceUrl = $stmt->fetchColumn();
@@ -158,12 +158,12 @@ namespace {
     $error = '';
     $success = false;
 
-    // Извличаме категориите
+    // Fetch categories
     $stmt = $pdo->query("SELECT id, name, icon FROM categories WHERE is_active = 1 ORDER BY `order`");
     $categories = $stmt->fetchAll();
 
     if ($_POST['upload'] ?? false) {
-        // Вземи името от формата — задължително
+        // Get name from form — required
         $name = trim($_POST['torrent_name'] ?? '');
         if (empty($name)) {
             $error = $lang->get('torrent_name') . ' ' . ($lang->get('is_required') ?? 'е задължително');
@@ -180,7 +180,7 @@ namespace {
                 } elseif ($file['size'] > $maxSize) {
                     $error = $lang->get('file_too_large');
                 } else {
-                    // Парсваме .torrent файла
+                    // Parse .torrent file
                     $torrentData = file_get_contents($file['tmp_name']);
                     if ($torrentData === false) {
                         $error = $lang->get('upload_failed') . ': Не може да се прочете файла.';
@@ -196,18 +196,18 @@ namespace {
                         } else {
                             $info = $decoded['info'];
 
-                            // ?? ДОБАВЕНО: Проверка дали $info е масив
+                            // ?? ADDED: Check if $info is an array
                             if (!is_array($info)) {
                                 $error = $lang->get('invalid_torrent_structure');
                             } else {
                                 $size = calculateTorrentSize($info);
                                 $filesCount = isset($info['files']) ? count($info['files']) : 1;
 
-                                // Генерираме info_hash като HEX (40 символа)
+                                // Generate info_hash as HEX (40 characters)
                                 $infoBencoded = BencodeParser::encode($info);
                                 $infoHash = sha1($infoBencoded); // < без втория параметър > HEX
 
-                                // Качваме постер ако има
+                                // Upload poster if provided
                                 $posterPath = null;
                                 if (isset($_FILES['poster']) && $_FILES['poster']['error'] === UPLOAD_ERR_OK) {
                                     $poster = $_FILES['poster'];
@@ -222,7 +222,7 @@ namespace {
                                     }
                                 }
 
-                                // Валидираме категорията
+                                // Validate category
                                 $categoryId = (int)($_POST['category_id'] ?? 1);
                                 $validCategory = false;
                                 foreach ($categories as $cat) {
@@ -235,7 +235,7 @@ namespace {
                                     $categoryId = 1; // Default category
                                 }
 
-                                // Записваме в базата
+                                // Save to database
                                 try {
                                     $stmt = $pdo->prepare("
                                         INSERT INTO torrents 
@@ -298,7 +298,7 @@ namespace {
                     <?php endif; ?>
 
                     <form method="POST" enctype="multipart/form-data">
-                        <!-- Ограничаваме максималния размер на файла на 5MB -->
+                        <!-- Limit maximum file size to 5MB -->
                         <input type="hidden" name="MAX_FILE_SIZE" value="5242880">
 
                         <div class="mb-3">
@@ -342,11 +342,11 @@ namespace {
                             <input type="url" name="youtube_link" class="form-control" placeholder="https://www.youtube.com/watch?v=...">
                         </div>
 
-                        <!-- BBC Редактор -->
+                        <!-- BBC Editor -->
                         <div class="mb-3">
                             <label class="form-label"><?= $lang->get('description') ?></label>
 
-                            <!-- BBC инструменти -->
+                            <!-- BBC tools -->
                             <div class="bb-editor-toolbar mb-2 p-2 border rounded bg-light d-flex flex-wrap gap-1">
                                 <div class="btn-group btn-group-sm" role="group">
                                     <button type="button" class="btn btn-outline-secondary" onclick="insertBBCode('[b]', '[/b]')" title="<?= $lang->get('bold') ?>"><?= $lang->get('bold') ?></button>
@@ -367,7 +367,7 @@ namespace {
                                     <button type="button" class="btn btn-outline-secondary" onclick="insertBBCode('[*]', '')" title="<?= $lang->get('list_item') ?>">•</button>
                                 </div>
 
-                                <!-- Падащи менюта -->
+                                <!-- Dropdown menus -->
                                 <div class="btn-group btn-group-sm">
                                     <select class="form-select form-select-sm" onchange="applyFontFace(this.value); this.selectedIndex = 0;" title="<?= $lang->get('font') ?>">
                                         <option value=""><?= $lang->get('font') ?>...</option>
@@ -449,7 +449,7 @@ namespace {
 
 <?php require_once __DIR__ . '/templates/footer.php'; ?>
 
-<!-- JavaScript за BBC редактора -->
+<!-- JavaScript for BBC editor -->
 <script>
 function insertBBCode(openTag, closeTag) {
     const textarea = document.getElementById('description');

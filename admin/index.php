@@ -7,12 +7,12 @@ $pdo = Database::getInstance();
 $auth = new Auth($pdo);
 $lang = new Language($_SESSION['lang'] ?? 'en');
 
-// Проверка за администраторски права (само Owner)
+// Check for administrator rights (Owner only)
 if ($auth->getRank() < 6) {
     die('<div class="container mt-5"><div class="alert alert-danger">' . $lang->get('no_permission') . '</div></div>');
 }
 
-// Статистики
+// Statistics
 $totalUsers = $pdo->query("SELECT COUNT(*) FROM users")->fetchColumn();
 $totalTorrents = $pdo->query("SELECT COUNT(*) FROM torrents")->fetchColumn();
 $totalForums = $pdo->query("SELECT COUNT(*) FROM forums")->fetchColumn();
@@ -22,9 +22,9 @@ $pendingTranslations = $pdo->query("SELECT COUNT(*) FROM translations WHERE stat
 require_once __DIR__ . '/../templates/header.php';
 ?>
 
-<!-- ✅ ВГРАДЕН CSS ЗА АДМИН ПАНЕЛ -->
+<!-- ✅ EMBEDDED CSS FOR ADMIN PANEL -->
 <style>
-/* Тъмна навигация */
+/* Dark navigation */
 .navbar {
     background-color: #212529 !important;
     box-shadow: 0 2px 4px rgba(0,0,0,0.2);
@@ -41,7 +41,7 @@ require_once __DIR__ . '/../templates/header.php';
     background-color: #495057;
 }
 
-/* Заглавие */
+/* Title */
 .admin-panel-title {
     background-color: #0d6efd;
     color: white;
@@ -52,7 +52,7 @@ require_once __DIR__ . '/../templates/header.php';
     font-size: 1.3rem;
 }
 
-/* Карти */
+/* Cards */
 .admin-card {
     border: 1px solid #dee2e6;
     border-radius: 8px;
@@ -60,7 +60,7 @@ require_once __DIR__ . '/../templates/header.php';
     overflow: hidden;
 }
 
-/* Цветни заглавия */
+/* Colored headers */
 .card-header.bg-primary { background-color: #0d6efd !important; }
 .card-header.bg-success { background-color: #28a745 !important; }
 .card-header.bg-info { background-color: #0dcaf0 !important; }
@@ -69,7 +69,7 @@ require_once __DIR__ . '/../templates/header.php';
 .card-header.bg-secondary { background-color: #6c757d !important; }
 .card-header.bg-dark { background-color: #212529 !important; }
 
-/* Пурпурен цвят */
+/* Purple color */
 .bg-purple {
     background-color: #6f42c1 !important;
 }
@@ -92,7 +92,7 @@ require_once __DIR__ . '/../templates/header.php';
     </div>
 
     <div class="row">
-        <!-- Статистики -->
+        <!-- Statistics -->
         <div class="col-md-6 mb-4">
             <div class="card admin-card h-100">
                 <div class="card-header bg-primary text-white">
@@ -125,7 +125,7 @@ require_once __DIR__ . '/../templates/header.php';
             </div>
         </div>
 
-        <!-- Бързи линкове -->
+        <!-- Quick links -->
         <div class="col-md-6 mb-4">
             <div class="card admin-card h-100">
                 <div class="card-header bg-purple text-white">
@@ -142,7 +142,7 @@ require_once __DIR__ . '/../templates/header.php';
                         <a href="/admin/polls.php" class="btn btn-dark"><?= $lang->get('manage_polls') ?></a>
                         <a href="/admin/translations.php" class="btn btn-purple"><?= $lang->get('manage_translations') ?></a>
                         <a href="/admin/scrape.php" class="btn btn-primary"><?= $lang->get('tracker_statistics') ?></a>
-                        <!-- ✅ Добавен линк към настройките -->
+                        <!-- ✅ Added link to settings -->
                         <a href="/admin/settings.php" class="btn btn-outline-purple"><?= $lang->get('system_settings') ?></a>
                     </div>
                 </div>
@@ -150,7 +150,7 @@ require_once __DIR__ . '/../templates/header.php';
         </div>
     </div>
 
-    <!-- Останалите редове са същите, но с цветни заглавия -->
+    <!-- The remaining rows are the same, but with colored headers -->
     <div class="row">
         <div class="col-md-4 mb-4">
             <div class="card admin-card h-100">
@@ -242,7 +242,7 @@ require_once __DIR__ . '/../templates/header.php';
             </div>
         </div>
 
-        <!-- ✅ Направен работещ линк към настройките -->
+        <!-- ✅ Made working link to settings -->
         <div class="col-md-6 mb-4">
             <div class="card admin-card h-100">
                 <div class="card-header bg-purple text-white">

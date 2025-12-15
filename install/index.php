@@ -3,30 +3,30 @@ declare(strict_types=1);
 session_start();
 header('Content-Type: text/html; charset=utf-8');
 
-// Път към config.php в includes/
+// Path to config.php in includes/
 $configPath = __DIR__ . '/../includes/config.php';
 
-// Ако config.php липсва — грешка
+// If config.php is missing — error
 if (!file_exists($configPath)) {
-    die('<h2 style="color:red; text-align:center;">❌ Грешка: Липсва файлът <code>includes/config.php</code>!<br>Моля, създайте го ръчно.</h2>');
+    die('<h2 style="color:red; text-align:center;">❌ Error: File <code>includes/config.php</code> is missing!<br>Please create it manually.</h2>');
 }
 
-// Зареждаме текущата конфигурация
+// Load current configuration
 $currentConfig = require $configPath;
 
-// Ако вече е инсталирано — показваме съобщение
+// If already installed — show message
 if ($currentConfig['site']['installed'] ?? false) {
-    die('<h2 style="color:green; text-align:center;">✅ Системата вече е инсталирана!<br><br><strong>❗️ Моля, изтрийте или преименувайте папка <code>/install/</code> за ваша сигурност!</strong></h2>');
+    die('<h2 style="color:green; text-align:center;">✅ System is already installed!<br><br><strong>❗️ Please delete or rename the <code>/install/</code> folder for your security!</strong></h2>');
 }
 
-// Език по подразбиране
+// Default language
 $lang = $_POST['language'] ?? $_GET['lang'] ?? 'en';
 $supportedLangs = ['en', 'bg', 'fr', 'de', 'ru'];
 if (!in_array($lang, $supportedLangs)) {
     $lang = 'en';
 }
 
-// Зареждане на езиковия файл
+// Load language file
 $langFile = __DIR__ . "/lang/{$lang}.php";
 if (!file_exists($langFile)) {
     $langFile = __DIR__ . '/lang/en.php';
@@ -37,9 +37,9 @@ $errors = [];
 $success = false;
 $currentStep = $_POST['step'] ?? $_GET['step'] ?? '1';
 
-// --- СТЪПКА 1: Настройки на трекера ---
+// --- STEP 1: Tracker settings ---
 if ($currentStep === '1' && ($_POST['step'] ?? null) === '1') {
-    // Винаги запазваме данните от POST в сесията
+    // Always save POST data to session
     $_SESSION['install_step1'] = [
         'tracker_name' => trim($_POST['tracker_name'] ?? 'TorrentBG'),
         'tracker_url' => trim($_POST['tracker_url'] ?? ''),
@@ -49,7 +49,7 @@ if ($currentStep === '1' && ($_POST['step'] ?? null) === '1') {
         'omdb_api_key' => trim($_POST['omdb_api_key'] ?? ''),
     ];
 
-    // Ако е натиснат "Save Settings", правим валидация
+    // If "Save Settings" is pressed, validate
     if ($_POST['save_settings'] ?? false) {
         $errors = [];
         if (empty($_SESSION['install_step1']['tracker_name'])) $errors[] = "Tracker name is required.";
@@ -61,12 +61,12 @@ if ($currentStep === '1' && ($_POST['step'] ?? null) === '1') {
             $currentStep = '2';
         }
     } else {
-        // Ако е натиснат "Next Step" или друг submit — преминаваме без валидация
+        // If "Next Step" or other submit is pressed — proceed without validation
         $currentStep = '2';
     }
 }
 
-// --- СТЪПКА 2: База данни и администратор ---
+// --- STEP 2: Database and administrator ---
 if ($currentStep === '2' && ($_POST['install'] ?? false)) {
     $host = $_POST['db_host'] ?? '';
     $user = $_POST['db_user'] ?? '';
@@ -76,7 +76,7 @@ if ($currentStep === '2' && ($_POST['install'] ?? false)) {
     $admin_pass = $_POST['admin_pass'] ?? '';
     $admin_email = $_POST['admin_email'] ?? '';
 
-    // Сохраняем данные в сессии для восстановления при ошибке
+    // Save data to session for recovery on error
     $_SESSION['install_step2'] = [
         'db_host' => $host,
         'db_user' => $user,
@@ -97,16 +97,16 @@ if ($currentStep === '2' && ($_POST['install'] ?? false)) {
 
     if (empty($errors)) {
         try {
-            // Проверка подключения к БД
+            // Check database connection
             $pdo = new PDO("mysql:host=$host;charset=utf8mb4", $user, $pass, [
                 PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
                 PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
             ]);
             
-            // Проверка существования БД
+            // Check database existence
             $pdo->exec("USE `$name`");
 
-            // Проверка за SQL файл в root/sql/database.sql
+            // Check for SQL file in root/sql/database.sql
             $sqlFile = __DIR__ . '/../sql/database.sql';
             if (!file_exists($sqlFile)) {
                 $errors[] = $translations[$lang]['errors']['sql_missing'];
@@ -126,10 +126,10 @@ if ($currentStep === '2' && ($_POST['install'] ?? false)) {
                 $stmt = $pdo->prepare("INSERT INTO users (username, email, password, `rank`, language) VALUES (?, ?, ?, 6, ?)");
                 $stmt->execute([$admin_user, $admin_email, $hashedPass, $lang]);
 
-                // === ЗАПИС НА НАСТРОЙКИТЕ В ТАБЛИЦА `settings` ===
+                // === SAVE SETTINGS TO `settings` TABLE ===
                 $step1Data = $_SESSION['install_step1'] ?? [];
                 
-                // Валидация URL
+                // URL validation
                 $trackerUrl = filter_var($step1Data['tracker_url'] ?? '', FILTER_VALIDATE_URL) ?: '';
                 $announceUrl = filter_var($step1Data['announce_url'] ?? '', FILTER_VALIDATE_URL) ?: '';
                 
@@ -148,7 +148,7 @@ if ($currentStep === '2' && ($_POST['install'] ?? false)) {
                         ->execute([$key, $value]);
                 }
 
-                // === АКТУАЛИЗИРАМЕ config.php ===
+                // === UPDATE config.php ===
                 $newConfig = [
                     'db' => [
                         'host' => $host,
@@ -182,7 +182,7 @@ if ($currentStep === '2' && ($_POST['install'] ?? false)) {
                     throw new Exception("Failed to update config.php");
                 }
 
-                // Очистка сессии после успешной установки
+                // Clear session after successful installation
                 unset($_SESSION['install_step1'], $_SESSION['install_step2']);
                 $success = true;
             }

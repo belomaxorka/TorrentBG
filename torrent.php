@@ -28,15 +28,15 @@ if (!$torrent) {
     die($lang->get('torrent_not_found'));
 }
 
-// === IMDb информация — с реален API ключ от базата ===
+// === IMDb information — with real API key from database ===
 $imdbInfo = null;
 $imdbId = null;
 if (!empty($torrent['imdb_link'])) {
-    // Извличаме IMDb ID (tt1234567)
+    // Extract IMDb ID (tt1234567)
     if (preg_match('/(tt\d+)/', $torrent['imdb_link'], $matches)) {
         $imdbId = $matches[1];
         
-        // Вземи API ключа от базата
+        // Get API key from database
         $stmt = $pdo->prepare("SELECT value FROM settings WHERE name = 'omdb_api_key'");
         $stmt->execute();
         $omdbApiKey = $stmt->fetchColumn();
@@ -72,7 +72,7 @@ if ($torrent['youtube_link']) {
     }
 }
 
-// === Рейтинг ===
+// === Rating ===
 $userRating = 0;
 if ($auth->isLoggedIn()) {
     $stmt = $pdo->prepare("SELECT rating FROM torrent_ratings WHERE torrent_id = ? AND user_id = ?");
@@ -81,7 +81,7 @@ if ($auth->isLoggedIn()) {
     $userRating = $rating ? $rating['rating'] : 0;
 }
 
-// === Коментари ===
+// === Comments ===
 $stmt = $pdo->prepare("
     SELECT tc.*, u.username, u.rank
     FROM torrent_comments tc
@@ -268,7 +268,7 @@ require_once __DIR__ . '/templates/header.php';
     </div>
 </div>
 
-<!-- Модален прозорец за редакция на коментар -->
+<!-- Modal window for editing comment -->
 <div class="modal fade" id="editCommentModal" tabindex="-1">
     <div class="modal-dialog">
         <div class="modal-content">
@@ -307,7 +307,7 @@ require_once __DIR__ . '/templates/header.php';
 </style>
 
 <script>
-// Рейтинг
+// Rating
 document.querySelectorAll('.star').forEach(star => {
     star.addEventListener('click', function() {
         const rating = this.getAttribute('data-rating');
@@ -327,7 +327,7 @@ document.querySelectorAll('.star').forEach(star => {
     });
 });
 
-// Редакция на коментар
+// Edit comment
 document.querySelectorAll('.edit-comment-btn').forEach(btn => {
     btn.addEventListener('click', function() {
         const id = this.getAttribute('data-id');

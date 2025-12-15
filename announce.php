@@ -3,14 +3,14 @@ require_once __DIR__ . '/includes/Database.php';
 
 $pdo = Database::getInstance();
 
-// Помощна функция за получаване на настройка
+// Helper function to get setting
 function getSetting($pdo, $name, $default = '') {
     $stmt = $pdo->prepare("SELECT value FROM settings WHERE name = ?");
     $stmt->execute([$name]);
     return $stmt->fetchColumn() ?: $default;
 }
 
-// Помощна функция за bdecode (ако нямаш)
+// Helper function for bdecode (if you don't have it)
 function safe_bdecode($s, &$pos = 0) {
     if ($pos >= strlen($s)) return null;
     $c = $s[$pos];
@@ -53,7 +53,7 @@ function safe_bdecode($s, &$pos = 0) {
     return null;
 }
 
-// Вземи info_hash от заявката
+// Get info_hash from request
 if (!isset($_GET['info_hash'])) {
     die('d14:failure reason20:Missing info_hashe');
 }
@@ -66,7 +66,7 @@ $downloaded = (int)($_GET['downloaded'] ?? 0);
 $left = (int)($_GET['left'] ?? 1);
 $event = $_GET['event'] ?? '';
 
-// Валидиране
+// Validation
 if (strlen($infoHash) !== 20 || strlen($peerId) < 10 || $port < 1 || $port > 65535) {
     die('d14:failure reason18:Invalid info_hash or peer_ide');
 }
@@ -75,16 +75,16 @@ $infoHashHex = bin2hex($infoHash);
 $ip = $_SERVER['REMOTE_ADDR'] ?? '127.0.0.1';
 $seeder = ($left == 0) ? 1 : 0;
 
-// Валидиране на IP
+// IP validation
 if (!filter_var($ip, FILTER_VALIDATE_IP)) {
     die('d14:failure reason13:Invalid IPe');
 }
 
-// Вземи режима на тракера
+// Get tracker mode
 $trackerMode = getSetting($pdo, 'tracker_mode', 'private');
 
 if ($trackerMode === 'private') {
-    // СТАНДАРТЕН PRIVATE РЕЖИМ
+    // STANDARD PRIVATE MODE
     $stmt = $pdo->prepare("SELECT id FROM torrents WHERE info_hash = ?");
     $stmt->execute([$infoHashHex]);
     $torrent = $stmt->fetch();
@@ -95,7 +95,7 @@ if ($trackerMode === 'private') {
 
     $torrentId = $torrent['id'];
 
-    // Запис в peers с torrent_id
+    // Insert into peers with torrent_id
     $stmt = $pdo->prepare("
         INSERT INTO peers (torrent_id, info_hash, peer_id, ip, port, seeder, uploaded, downloaded, `left`, last_announce)
         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, NOW())
@@ -109,7 +109,7 @@ if ($trackerMode === 'private') {
     $stmt->execute([$torrentId, $infoHashHex, $peerId, $ip, $port, $seeder, $uploaded, $downloaded, $left]);
 
 } else {
-    // OPEN РЕЖИМ — не изисква запис в torrents
+    // OPEN MODE — does not require entry in torrents
     $stmt = $pdo->prepare("
         INSERT INTO peers (torrent_id, info_hash, peer_id, ip, port, seeder, uploaded, downloaded, `left`, last_announce)
         VALUES (NULL, ?, ?, ?, ?, ?, ?, ?, ?, NOW())
@@ -123,10 +123,10 @@ if ($trackerMode === 'private') {
     $stmt->execute([$infoHashHex, $peerId, $ip, $port, $seeder, $uploaded, $downloaded, $left]);
 }
 
-// Премахни старите пиъри (> 30 минути)
+// Remove old peers (> 30 minutes)
 $pdo->exec("DELETE FROM peers WHERE last_announce < NOW() - INTERVAL 30 MINUTE");
 
-// Вземи списък с други пиъри (макс. 50 общо: 30 IPv4 + 20 IPv6)
+// Get list of other peers (max. 50 total: 30 IPv4 + 20 IPv6)
 if ($trackerMode === 'private') {
     $stmt = $pdo->prepare("
         SELECT ip, port FROM peers 
@@ -163,10 +163,10 @@ foreach ($peers as $p) {
     }
 }
 
-// Компактен отговор за IPv4
+// Compact response for IPv4
 $peersPart = strlen($ipv4List) . ':' . $ipv4List;
 
-// Структуриран отговор за IPv6 (ако има)
+// Structured response for IPv6 (if any)
 $peers6Part = '';
 if (!empty($ipv6List)) {
     $peers6Encoded = 'l';
